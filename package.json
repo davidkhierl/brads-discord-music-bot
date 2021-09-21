@@ -6,6 +6,9 @@
   "repository": "https://github.com/Androz2091/discord-music-bot",
   "author": "David Khierl <hi@davidkhierkhierl.com>",
   "license": "MIT",
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
     "start": "node index.js"
   },
