@@ -20,10 +20,10 @@
     "discord.js": "^13.1.0",
     "dotenv": "^10.0.0",
     "ffmpeg-static": "^4.4.0",
-    "slash-create": "^4.0.1"
+    "slash-create": "^4.0.1",
+    "mdtable": "^0.3.1"
   },
   "devDependencies": {
-    "eslint": "^7.32.0",
-    "mdtable": "^0.3.1"
+    "eslint": "^7.32.0"
   }
 }
