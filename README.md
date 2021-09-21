@@ -16,26 +16,26 @@ The perfect music bot for your Discord server! 🎶
 
 Here are all the available commands in the bot!
 
-| Name           |            Description             |   Options |
-| :------------- | :--------------------------------: | --------: |
-| **/back**      |      Play the previous track       |           |
+|      Name      |            Description             |  Options  |
+|:---------------|:----------------------------------:|----------:|
+|   **/back**    |      Play the previous track       |           |
 | **/bassboost** |      Toggle bassboost filter       |           |
-| **/clear**     |      Clear the current queue.      |           |
-| **/history**   |     Display the queue history      |   \<page> |
-| **/jump**      |      Jump to a specific track      | \<tracks> |
-| **/loop**      |           Set loop mode            |   \<mode> |
-| **/np**        | See what's currently being played  |           |
-| **/pause**     |       Pause the current song       |           |
-| **/play**      |      Play a song from youtube      |  \<query> |
-| **/playnext**  | Add a song to the top of the queue |  \<query> |
-| **/queue**     |           See the queue            |   \<page> |
-| **/remove**    |      Remove a specific track       |  \<track> |
-| **/resume**    |      Resume the current song       |           |
-| **/seek**      |       Seek to the given time       |   \<time> |
-| **/shuffle**   |         Shuffle the queue          |           |
-| **/skip**      |      Skip to the current song      |           |
-| **/stop**      |          Stop the player           |           |
-| **/volume**    |          Set music volume          | \<amount> |
+|   **/clear**   |      Clear the current queue.      |           |
+|  **/history**  |     Display the queue history      |  \<page>  |
+|   **/jump**    |      Jump to a specific track      | \<tracks> |
+|   **/loop**    |           Set loop mode            |  \<mode>  |
+|    **/np**     | See what's currently being played  |           |
+|   **/pause**   |       Pause the current song       |           |
+|   **/play**    |      Play a song from youtube      | \<query>  |
+| **/playnext**  | Add a song to the top of the queue | \<query>  |
+|   **/queue**   |           See the queue            |  \<page>  |
+|  **/remove**   |      Remove a specific track       | \<track>  |
+|  **/resume**   |      Resume the current song       |           |
+|   **/seek**    |       Seek to the given time       |  \<time>  |
+|  **/shuffle**  |         Shuffle the queue          |           |
+|   **/skip**    |      Skip to the current song      |           |
+|   **/stop**    |          Stop the player           |           |
+|  **/volume**   |          Set music volume          | \<amount> |
 
 ## About
 
