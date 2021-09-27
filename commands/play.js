@@ -61,7 +61,6 @@ module.exports = class extends SlashCommand {
         searchResult.playlist ? "playlist" : "track"
       }...`,
     });
-    console.log(searchResult);
     searchResult.playlist
       ? queue.addTracks(searchResult.tracks)
       : queue.addTrack(searchResult.tracks[0]);
