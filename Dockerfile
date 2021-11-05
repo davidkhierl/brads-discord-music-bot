@@ -1,5 +1,5 @@
 FROM node:16-alpine3.11
-WORKDIR brads-discord-music-bot
+WORKDIR /usr/src/app
 
 RUN apk add ffmpeg
 
