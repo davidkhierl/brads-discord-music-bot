@@ -16,7 +16,7 @@ export const registerPlayerEvents = (player: Player) => {
     // Emitted when a playlist was added to the queue.
     .on("playlistAdd", (queue, playlist) => {
       queue.data.send(
-        `💿 | Playlist ${playlist} with 🎶${playlist.songs.length} songs added to the queue.`
+        `💿 | Playlist: **${playlist}** with 🎶 **${playlist.songs.length} songs** added to the queue in **${queue.connection.channel.name}**`
       );
     })
     // Emitted when there was no more music to play.

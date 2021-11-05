@@ -10,12 +10,12 @@ import {
 class play extends SlashCommand {
   constructor(creator: SlashCreator) {
     super(creator, {
-      name: "playlist",
-      description: "Play a playlist from youtube",
+      name: "play",
+      description: "Play a song from youtube",
       options: [
         {
-          name: "url",
-          description: "Playlist URL from youtube to play",
+          name: "song",
+          description: "Song name or URL from youtube to play",
           type: CommandOptionType.STRING,
           required: true,
         },
@@ -41,9 +41,9 @@ class play extends SlashCommand {
         );
       await queue.join(member.voice.channel);
       await ctx.sendFollowUp({
-        content: `⏱ | Loading track... **[ ${ctx.options.query} ]**`,
+        content: `⏱ | Loading track... **[ ${ctx.options.song} ]**`,
       });
-      await queue.play(ctx.options.query).catch((reason) => {
+      await queue.play(ctx.options.song).catch((reason) => {
         if (!guildQueue) queue.stop();
         if (reason) throw new Error(`❌ | Error: ${reason}`);
       });
