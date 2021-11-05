@@ -37,7 +37,9 @@ class play extends SlashCommand {
       const guildQueue = player.getQueue(guild.id);
       const member = guild.members.cache.get(ctx.user.id);
       if (!member || !member.voice.channel)
-        throw new Error(`😟 ${client.user?.username} failed to join.`);
+        throw new Error(
+          `🥱 ${client.user?.username} failed to join. Please make sure that you're already in a voice channel and try the command again.`
+        );
       await queue.join(member.voice.channel);
       await ctx.sendFollowUp({
         content: `⏱ | Loading track... **[ ${ctx.options.query} ]**`,
