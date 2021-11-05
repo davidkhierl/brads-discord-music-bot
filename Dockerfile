@@ -3,7 +3,8 @@ WORKDIR discord-music-bot
 RUN apk add ffmpeg
 
 COPY . .
-RUN npm install
+RUN yarn install
+RUN yarn build
 
 CMD yarn start
 
