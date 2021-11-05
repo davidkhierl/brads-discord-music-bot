@@ -1,4 +1,4 @@
-FROM node:alpine
+FROM node:16
 WORKDIR discord-music-bot
 RUN apk add ffmpeg
 
