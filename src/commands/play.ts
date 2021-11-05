@@ -1,3 +1,5 @@
+import client from '../client';
+import player from '../player';
 import {
   CommandContext,
   CommandOptionType,
@@ -5,8 +7,6 @@ import {
   SlashCreator,
 } from "slash-create";
 
-import client from "../client";
-import player from "../player";
 
 class play extends SlashCommand {
   constructor(creator: SlashCreator) {
@@ -15,7 +15,7 @@ class play extends SlashCommand {
       description: "Play a song from youtube",
       options: [
         {
-          name: "query",
+          name: "song",
           description: "Song name or URL from youtube to play",
           type: CommandOptionType.STRING,
           required: true,

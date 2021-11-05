@@ -1,5 +1,5 @@
-import { Player } from "discord-music-player";
-import client from "./client";
+import client from './client';
+import { Player } from 'discord-music-player';
 
 export const registerPlayerEvents = (player: Player) => {
   player
@@ -14,12 +14,11 @@ export const registerPlayerEvents = (player: Player) => {
       if (!song.isFirst) queue.data.send(`✔️ | Added to queue **${song}**`);
     })
     // Emitted when a playlist was added to the queue.
-    // TODO: playlist
-    .on("playlistAdd", (_queue, playlist) =>
-      console.log(
-        `Playlist ${playlist} with ${playlist.songs.length} was added to the queue.`
-      )
-    )
+    .on("playlistAdd", (queue, playlist) => {
+      queue.data.send(
+        `💿 | Playlist ${playlist} with 🎶${playlist.songs.length} songs added to the queue.`
+      );
+    })
     // Emitted when there was no more music to play.
     // TODO: queue destroyed
     .on("queueDestroyed", (_queue) => console.log(`The queue was destroyed.`))

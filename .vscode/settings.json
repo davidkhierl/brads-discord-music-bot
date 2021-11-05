@@ -3,5 +3,10 @@
     "source.fixAll.eslint": true
   },
   "eslint.validate": ["javascript"],
-  "typescript.tsdk": "node_modules\\typescript\\lib"
+  "typescript.tsdk": "node_modules\\typescript\\lib",
+  "cSpell.words": [
+    "discordjs",
+    "mdtable",
+    "ytdl"
+  ]
 }
