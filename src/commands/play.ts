@@ -7,16 +7,15 @@ import {
   SlashCreator,
 } from "slash-create";
 
-
 class play extends SlashCommand {
   constructor(creator: SlashCreator) {
     super(creator, {
-      name: "play",
-      description: "Play a song from youtube",
+      name: "playlist",
+      description: "Play a playlist from youtube",
       options: [
         {
-          name: "song",
-          description: "Song name or URL from youtube to play",
+          name: "url",
+          description: "Playlist URL from youtube to play",
           type: CommandOptionType.STRING,
           required: true,
         },
