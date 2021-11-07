@@ -1,11 +1,12 @@
-import client from '../client';
-import player from '../player';
 import {
   CommandContext,
   CommandOptionType,
   SlashCommand,
   SlashCreator,
 } from "slash-create";
+
+import client from '../client';
+import player from '../player';
 
 class play extends SlashCommand {
   constructor(creator: SlashCreator) {

@@ -1,10 +1,10 @@
+import { GatewayServer } from 'slash-create';
 import client from './client';
 import creator from './creator';
 import dotenv from 'dotenv';
+import { generateDocs } from './docs';
 import path from 'path';
 import player from './player';
-import { GatewayServer } from 'slash-create';
-import { generateDocs } from './docs';
 import { registerPlayerEvents } from './events';
 
 dotenv.config();
