@@ -1,5 +1,5 @@
-import client from './client';
-import { Player } from 'discord-music-player';
+import { Player } from "discord-music-player";
+import client from "./client";
 
 export const registerPlayerEvents = (player: Player) => {
   player
@@ -48,9 +48,7 @@ export const registerPlayerEvents = (player: Player) => {
     .on("clientUndeafen", (_queue) => console.log(`I got undefeanded.`))
     // Emitted when there was an error in runtime
     .on("error", (error, queue) => {
-      queue.data.send(
-        `☠️ | Oops.. something went wrong. **Error: ${error}** in **${queue.guild.name}**`
-      );
+      queue.data.send(`☠️ | Oops.. something went wrong. **Error: ${error}**`);
       console.log(`Error: ${error} in ${queue.guild.name}`);
     });
 };
