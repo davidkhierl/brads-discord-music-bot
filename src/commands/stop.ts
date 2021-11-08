@@ -19,8 +19,7 @@ class stop extends SlashCommand {
       await ctx.defer();
       const guild = client.guilds.cache.get(ctx.guildID ?? "");
       if (!guild) throw new Error("❌ | Error: guild id missing.");
-      const channel = guild.channels.cache.get(ctx.channelID);
-      const queue = player.createQueue(guild?.id, { data: channel });
+      const queue = player.getQueue(ctx.guildID!);
 
       if (!queue || !queue.isPlaying)
         return void ctx.sendFollowUp({
