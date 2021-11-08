@@ -11,32 +11,34 @@ dotenv.config();
 
 registerPlayerEvents(player);
 
-client.on("ready", () => {
-  if (!client.user) {
-    console.log("User not found");
-    return;
-  }
+client.on('ready', () => {
+	if (!client.user) {
+		console.log('User not found');
+		return;
+	}
 
-  console.log(`Logged in as ${client.user.tag}!`);
+	console.log(`Logged in as ${client.user.tag}!`);
 
-  generateDocs(creator.commands);
+	generateDocs(creator.commands);
 });
 
 creator
-  .withServer(
-    new GatewayServer((handler) => client.ws.on("INTERACTION_CREATE", handler))
-  )
-  .registerCommandsIn(path.join(__dirname, "commands"))
-  .syncCommands();
+	.withServer(
+		new GatewayServer((handler) =>
+			client.ws.on('INTERACTION_CREATE', handler)
+		)
+	)
+	.registerCommandsIn(path.join(__dirname, 'commands'))
+	.syncCommands();
 
-client.on("guildCreate", async (guild) => {
-  try {
-    console.log(`creating commands in discord channel [${guild.name}]`);
-    await creator.syncCommandsIn(guild.id);
-    console.log(`commands successfully created.`);
-  } catch (error) {
-    if (error instanceof Error) console.log(error.message);
-  }
+client.on('guildCreate', async (guild) => {
+	try {
+		console.log(`creating commands in discord channel [${guild.name}]`);
+		await creator.syncCommandsIn(guild.id);
+		console.log('commands successfully created.');
+	} catch (error) {
+		if (error instanceof Error) console.log(error.message);
+	}
 });
 
 client.login(process.env.DISCORD_CLIENT_TOKEN);

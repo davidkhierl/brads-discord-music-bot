@@ -8,9 +8,3 @@ test
 
 #build
 build
-
-#reference
-commands
-docs.js
-events.js
-index.js

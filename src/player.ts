@@ -1,8 +1,8 @@
-import { Player } from "discord-music-player";
-import client from "./client";
+import { Player } from 'discord-music-player';
+import client from './client';
 
 const player = new Player(client, {
-  leaveOnEmpty: true,
+	leaveOnEmpty: true,
 });
 
 export default player;
