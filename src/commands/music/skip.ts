@@ -1,8 +1,8 @@
 import { CommandContext, SlashCommand, SlashCreator } from 'slash-create';
 
-import player from '../player';
+import player from '../../player';
 
-class play extends SlashCommand {
+class skip extends SlashCommand {
 	constructor(creator: SlashCreator) {
 		super(creator, {
 			name: 'skip',
@@ -30,4 +30,4 @@ class play extends SlashCommand {
 	}
 }
 
-export default play;
+export default skip;

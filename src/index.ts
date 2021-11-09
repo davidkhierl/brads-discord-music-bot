@@ -2,7 +2,6 @@ import { GatewayServer } from 'slash-create';
 import client from './client';
 import creator from './creator';
 import dotenv from 'dotenv';
-import { generateDocs } from './docs';
 import path from 'path';
 import player from './player';
 import { registerPlayerEvents } from './events';
@@ -16,10 +15,8 @@ client.on('ready', () => {
 		console.log('User not found');
 		return;
 	}
-
+	client.user.setActivity({ name: 'with Frennies', type: 'PLAYING' });
 	console.log(`Logged in as ${client.user.tag}!`);
-
-	generateDocs(creator.commands);
 });
 
 creator
@@ -28,13 +25,13 @@ creator
 			client.ws.on('INTERACTION_CREATE', handler)
 		)
 	)
-	.registerCommandsIn(path.join(__dirname, 'commands'))
-	.syncCommands();
+	.registerCommandsIn(path.join(__dirname, 'commands/music'))
+	.syncCommands({ deleteCommands: true });
 
 client.on('guildCreate', async (guild) => {
 	try {
 		console.log(`creating commands in discord channel [${guild.name}]`);
-		await creator.syncCommandsIn(guild.id);
+		await creator.syncCommandsIn(guild.id, true);
 		console.log('commands successfully created.');
 	} catch (error) {
 		if (error instanceof Error) console.log(error.message);

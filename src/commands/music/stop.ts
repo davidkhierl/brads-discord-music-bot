@@ -1,7 +1,7 @@
 import { CommandContext, SlashCommand, SlashCreator } from 'slash-create';
 
-import client from '../client';
-import player from '../player';
+import client from '../../client';
+import player from '../../player';
 
 class stop extends SlashCommand {
 	constructor(creator: SlashCreator) {

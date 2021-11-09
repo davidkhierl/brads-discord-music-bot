@@ -7,5 +7,13 @@
 		"source.fixAll.format": true
 	},
 	"typescript.tsdk": "node_modules\\typescript\\lib",
-	"cSpell.words": ["discordjs", "mdtable", "stroustrup", "ytdl"]
+	"cSpell.words": [
+		"discordjs",
+		"Frennies",
+		"mdtable",
+		"paren",
+		"parens",
+		"stroustrup",
+		"ytdl"
+	]
 }

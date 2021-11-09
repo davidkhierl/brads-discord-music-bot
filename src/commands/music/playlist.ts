@@ -5,18 +5,18 @@ import {
 	SlashCreator,
 } from 'slash-create';
 
-import client from '../client';
-import player from '../player';
+import client from '../../client';
+import player from '../../player';
 
-class play extends SlashCommand {
+class playlist extends SlashCommand {
 	constructor(creator: SlashCreator) {
 		super(creator, {
-			name: 'play',
-			description: 'Play a song from youtube',
+			name: 'playlist',
+			description: 'Play a playlist from youtube',
 			options: [
 				{
-					name: 'song',
-					description: 'Song name or URL from youtube to play',
+					name: 'url',
+					description: 'Playlist URL from youtube to play',
 					type: CommandOptionType.STRING,
 					required: true,
 				},
@@ -42,9 +42,9 @@ class play extends SlashCommand {
 				);
 			await queue.join(member.voice.channel);
 			await ctx.sendFollowUp({
-				content: `⏱ | Loading track... **[ ${ctx.options.song} ]**`,
+				content: '⏱ | Loading playlist...',
 			});
-			await queue.play(ctx.options.song).catch((reason) => {
+			await queue.playlist(ctx.options.url).catch((reason) => {
 				if (!guildQueue) queue.stop();
 				if (reason) throw new Error(`❌ | Error: ${reason}`);
 			});
@@ -59,4 +59,4 @@ class play extends SlashCommand {
 	}
 }
 
-export default play;
+export default playlist;
