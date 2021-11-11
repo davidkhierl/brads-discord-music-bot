@@ -17,7 +17,7 @@ export const registerPlayerEvents = (player: Player) => {
 		// Emitted when a playlist was added to the queue.
 		.on('playlistAdd', (queue, playlist) => {
 			queue.data.send(
-				`💿 | Playlist: **${playlist}** with 🎶 **${playlist.songs.length} songs** added to the queue in **${queue.connection.channel.name}**`
+				`💿 | Playlist: **${playlist}** with 🎶 **${playlist.songs.length} songs** added to the queue in **${queue.connection?.channel.name}**`
 			);
 		})
 		// Emitted when there was no more music to play.
@@ -32,13 +32,13 @@ export const registerPlayerEvents = (player: Player) => {
 		// Emitted when a song changed.
 		.on('songChanged', (queue, newSong, _oldSong) => {
 			queue.data.send(
-				`🎶 | Now playing: **${newSong}** in **${queue.connection.channel.name}**`
+				`🎶 | Now playing: **${newSong}** in **${queue.connection?.channel.name}**`
 			);
 		})
 		// Emitted when a first song in the queue started playing.
 		.on('songFirst', (queue, song) => {
 			queue.data.send(
-				`🎶 | Started playing: **${song}** in **${queue.connection.channel.name}**`
+				`🎶 | Started playing: **${song}** in **${queue.connection?.channel.name}**`
 			);
 		})
 		// Emitted when someone disconnected the bot from the channel.
