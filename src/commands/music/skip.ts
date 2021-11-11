@@ -7,9 +7,6 @@ class skip extends SlashCommand {
 		super(creator, {
 			name: 'skip',
 			description: 'Skip to the current song',
-			guildIDs: process.env.DISCORD_GUILD_ID
-				? [process.env.DISCORD_GUILD_ID]
-				: undefined,
 		});
 	}
 

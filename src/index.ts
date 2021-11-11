@@ -25,7 +25,7 @@ creator
 			client.ws.on('INTERACTION_CREATE', handler)
 		)
 	)
-	.registerCommandsIn(path.join(__dirname, 'commands/music'))
+	.registerCommandsIn(path.join(__dirname, 'commands'))
 	.syncCommands({ deleteCommands: true });
 
 client.on('guildCreate', async (guild) => {

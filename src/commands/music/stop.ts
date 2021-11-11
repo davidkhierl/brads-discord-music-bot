@@ -8,9 +8,6 @@ class stop extends SlashCommand {
 		super(creator, {
 			name: 'stop',
 			description: 'Stops playing the Music and cleans the Queue',
-			guildIDs: process.env.DISCORD_GUILD_ID
-				? [process.env.DISCORD_GUILD_ID]
-				: undefined,
 		});
 	}
 
