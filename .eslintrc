@@ -11,7 +11,7 @@
 	"plugins": ["@typescript-eslint", "prettier"],
 	"rules": {
 		"prettier/prettier": ["error", { "endOfLine": "auto" }],
-		"@typescript-eslint/indent": ["error", "tab", 2],
+		"@typescript-eslint/indent": ["error", "tab"],
 		"arrow-spacing": ["warn", { "before": true, "after": true }],
 		"comma-spacing": "error",
 		"comma-style": "error",
