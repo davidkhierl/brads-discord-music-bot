@@ -27,7 +27,7 @@ class playlist extends SlashCommand {
 	async run(ctx: CommandContext) {
 		try {
 			await ctx.defer();
-			const guild = client.guilds.cache.get(ctx.guildID ?? '');
+			const guild = client.guilds.cache.get(ctx.guildID!);
 			if (!guild) throw new Error('❌ | Error: guild id missing.');
 			const channel = guild.channels.cache.get(ctx.channelID);
 			const queue = player.createQueue(guild?.id, { data: channel });
