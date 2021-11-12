@@ -12,8 +12,8 @@ class meme extends SlashCommand {
 
 	async run(ctx: CommandContext) {
 		await ctx.defer();
-		const meme = await axios.get('https://meme-api.herokuapp.com/gimme');
-		await ctx.send({ embeds: [{ image: { url: meme.data.url } }] });
+		const gimme = await axios.get('https://meme-api.herokuapp.com/gimme');
+		await ctx.send({ embeds: [{ image: { url: gimme.data.url } }] });
 	}
 }
 
