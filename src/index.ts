@@ -28,16 +28,4 @@ creator
 	.registerCommandsIn(path.join(__dirname, 'commands'))
 	.syncCommands({ deleteCommands: true });
 
-client.on('guildCreate', async (guild) => {
-	try {
-		console.log(`creating commands in discord channel [${guild.name}]`);
-		await creator.syncCommandsIn(guild.id, true);
-		console.log('commands successfully created.');
-	} catch (error) {
-		if (error instanceof Error) console.log(error.message);
-	}
-});
-
 client.login(process.env.DISCORD_CLIENT_TOKEN);
-
-export { creator };

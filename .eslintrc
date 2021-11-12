@@ -11,13 +11,11 @@
 	"plugins": ["@typescript-eslint", "prettier"],
 	"rules": {
 		"prettier/prettier": ["error", { "endOfLine": "auto" }],
-		"@typescript-eslint/indent": ["error", "tab"],
 		"arrow-spacing": ["warn", { "before": true, "after": true }],
 		"comma-spacing": "error",
 		"comma-style": "error",
 		"dot-location": ["error", "property"],
 		"handle-callback-err": "off",
-		"indent": "off",
 		"keyword-spacing": "error",
 		"max-nested-callbacks": ["error", { "max": 4 }],
 		"max-statements-per-line": ["error", { "max": 2 }],

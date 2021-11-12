@@ -11,9 +11,7 @@
 	},
 	"scripts": {
 		"build": "tsc",
-		"watch": "tsc --watch",
-		"dev:build": "nodemon -r dotenv/config --inspect build/index.js",
-		"dev": "nodemon -r dotenv/config --inspect src/index.ts",
+		"dev": "tsc-watch --onSuccess \"nodemon -r dotenv/config --inspect build/index.js\"",
 		"start": "node -r dotenv/config build/index.js"
 	},
 	"dependencies": {
@@ -37,6 +35,7 @@
 		"nodemon": "^2.0.14",
 		"prettier": "^2.4.1",
 		"ts-node": "^10.4.0",
+		"tsc-watch": "^4.5.0",
 		"typescript": "^4.4.4"
 	}
 }

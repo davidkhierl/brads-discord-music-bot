@@ -22,7 +22,8 @@
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"forceConsistentCasingInFileNames": true,
-		"importHelpers": true
+		"importHelpers": true,
+		"sourceMap": true
 	},
 	"ts-node": {
 		"files": true
