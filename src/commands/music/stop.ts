@@ -1,7 +1,5 @@
 import { CommandContext, SlashCommand, SlashCreator } from 'slash-create';
-
-import client from '../../client';
-import player from '../../player';
+import Music from '../../modules/Music/Music';
 
 class stop extends SlashCommand {
 	constructor(creator: SlashCreator) {
@@ -12,28 +10,20 @@ class stop extends SlashCommand {
 	}
 
 	async run(ctx: CommandContext) {
-		try {
-			await ctx.defer();
-			const guild = client.guilds.cache.get(ctx.guildID!);
-			if (!guild) throw new Error('❌ | Error: guild id missing.');
-			const queue = player.getQueue(ctx.guildID!);
+		const music = new Music(ctx);
 
-			if (!queue || !queue.isPlaying)
-				return void ctx.sendFollowUp({
-					content: '❌ | No music is being played!',
-				});
+		await music.ctx.defer();
 
-			queue.stop();
+		if (!music.queue.isPlaying)
 			return void ctx.sendFollowUp({
-				content: '🛑 | Stopped the player!',
+				content: '❌ | No music is being played!',
 			});
-		} catch (error) {
-			if (error instanceof Error)
-				return void ctx.sendFollowUp({ content: error.message });
-			return void ctx.sendFollowUp({
-				content: '☠️ | Oops.. something went wrong.',
-			});
-		}
+
+		music.queue.stop();
+
+		return void ctx.sendFollowUp({
+			content: '🛑 | Stopped the player!',
+		});
 	}
 }
 

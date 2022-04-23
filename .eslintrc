@@ -51,5 +51,6 @@
 		"space-unary-ops": "error",
 		"spaced-comment": "error",
 		"yoda": "error"
-	}
+	},
+	"ignorePatterns": ["build/**/*"]
 }
