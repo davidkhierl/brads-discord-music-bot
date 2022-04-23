@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import Brads from './Brads';
+import Brads from './brads/Brads';
 import MusicModule from './modules/Music/MusicModule';
 
 dotenv.config();

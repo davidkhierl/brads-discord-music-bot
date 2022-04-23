@@ -1,6 +1,6 @@
 import { Player, Queue } from 'discord-music-player';
 import { GuildBasedChannel } from 'discord.js';
-import BradsModule from '../../bot/BradsModule';
+import BradsModule from '../../brads/BradsModule';
 import MusicPlayer from './MusicPlayer';
 
 export interface MusicQueue extends Queue {

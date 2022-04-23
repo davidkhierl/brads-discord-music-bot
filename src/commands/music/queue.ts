@@ -5,8 +5,7 @@ import {
 	SlashCreator,
 } from 'slash-create';
 
-import client from '../../client';
-import player from '../../player';
+import Music from '../../modules/Music/Music';
 
 class queue extends SlashCommand {
 	constructor(creator: SlashCreator) {
@@ -25,56 +24,47 @@ class queue extends SlashCommand {
 	}
 
 	async run(ctx: CommandContext) {
-		try {
-			await ctx.defer();
-			const guild = client.guilds.cache.get(ctx.guildID!);
+		const music = new Music(ctx);
 
-			if (!guild) throw new Error('❌ | Error: guild id missing.');
-			const guildQueue = player.getQueue(ctx.guildID!);
+		await music.ctx.defer();
 
-			if (!guildQueue || !guildQueue.isPlaying)
-				return void ctx.sendFollowUp({
-					content: '🥱 | No music is being played my frenny!',
-				});
-
-			if (!ctx.options.page) ctx.options.page = 1;
-			const pageStart = 10 * (ctx.options.page - 1);
-			const pageEnd = pageStart + 10;
-			const nowPlaying = guildQueue.nowPlaying;
-			const songs = guildQueue.songs
-				.slice(pageStart, pageEnd)
-				.map(
-					(song, index) =>
-						`${index + pageStart + 1}. **${song.name}**`
-				);
+		if (!music.guildQueue || !music.guildQueue.isPlaying)
 			return void ctx.sendFollowUp({
-				embeds: [
-					{
-						title: 'Server Queue',
-						description: `${songs.join('\n')}${
-							guildQueue.songs.length > pageEnd
-								? `\n...${
-										guildQueue.songs.length - pageEnd
-								  } more track(s)`
-								: ''
-						}`,
-						color: 0x0099ff,
-						fields: [
-							{
-								name: 'Now Playing',
-								value: `🎶 | **${nowPlaying?.name}**`,
-							},
-						],
-					},
-				],
+				content: '🥱 | No music is being played my frenny!',
 			});
-		} catch (error) {
-			if (error instanceof Error)
-				return void ctx.sendFollowUp({ content: error.message });
-			return void ctx.sendFollowUp({
-				content: '☠️ | Oops.. something went wrong.',
-			});
-		}
+
+		if (!music.ctx.options.page) music.ctx.options.page = 1;
+
+		const pageStart = 10 * (music.ctx.options.page - 1);
+		const pageEnd = pageStart + 10;
+
+		const currentSongPlaying = music.guildQueue.nowPlaying;
+
+		const songs = music.guildQueue.songs
+			.slice(pageStart, pageEnd)
+			.map((song, index) => `${index + pageStart + 1}. **${song.name}**`);
+
+		return void ctx.sendFollowUp({
+			embeds: [
+				{
+					title: 'Server Queue',
+					description: `${songs.join('\n')}${
+						music.guildQueue.songs.length > pageEnd
+							? `\n...${
+									music.guildQueue.songs.length - pageEnd
+							  } more track(s)`
+							: ''
+					}`,
+					color: 0x0099ff,
+					fields: [
+						{
+							name: 'Now Playing',
+							value: `🎶 | **${currentSongPlaying?.name}**`,
+						},
+					],
+				},
+			],
+		});
 	}
 }
 

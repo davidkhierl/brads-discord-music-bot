@@ -1,4 +1,4 @@
-import Bot from './Bot';
+import Bot from '../bot/Bot';
 
 export interface IBradsModule {
 	readonly bot: Bot;

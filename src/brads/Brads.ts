@@ -1,6 +1,6 @@
 import { Client } from 'discord.js';
-import Bot from './bot/Bot';
-import BradsModule from './bot/BradsModule';
+import Bot from '../bot/Bot';
+import BradsModule from './BradsModule';
 
 export default class Brads {
 	readonly client: Client;

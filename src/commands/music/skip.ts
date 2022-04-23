@@ -1,6 +1,5 @@
 import { CommandContext, SlashCommand, SlashCreator } from 'slash-create';
-
-import player from '../../player';
+import Music from '../../modules/Music/Music';
 
 class skip extends SlashCommand {
 	constructor(creator: SlashCreator) {
@@ -11,16 +10,21 @@ class skip extends SlashCommand {
 	}
 
 	async run(ctx: CommandContext) {
-		await ctx.defer();
-		const queue = player.getQueue(ctx.guildID!);
-		if (!queue || !queue.isPlaying)
+		const music = new Music(ctx);
+
+		await music.ctx.defer();
+
+		if (!music.guildQueue || !music.guildQueue.isPlaying)
 			return void ctx.sendFollowUp({
 				content: '❌ | No music is being played!',
 			});
-		const currentTrack = queue.songs[0];
-		const success = queue.skip();
+
+		const currentTrack = music.guildQueue.songs[0];
+
+		const song = music.guildQueue.skip();
+
 		return void ctx.sendFollowUp({
-			content: success
+			content: song
 				? `✅ | Skipped **${currentTrack}**!`
 				: '❌ | Something went wrong!',
 		});
