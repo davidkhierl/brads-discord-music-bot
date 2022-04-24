@@ -2,13 +2,28 @@ import { Client, Intents } from 'discord.js';
 import path from 'path';
 import { GatewayServer, SlashCreator } from 'slash-create';
 
+/**
+ * Main Bot class
+ */
 export default class Bot {
+	/**
+	 * Bot instance
+	 */
 	private static instance: Bot;
 
+	/**
+	 * Discord Client
+	 */
 	readonly client: Client;
 
+	/**
+	 * Slash Creator instance for using commands and interactions.
+	 */
 	readonly creator: SlashCreator;
 
+	/**
+	 * Main Bot instance
+	 */
 	private constructor() {
 		this.client = new Client({
 			intents: [
@@ -30,6 +45,10 @@ export default class Bot {
 		this.registerCommands();
 	}
 
+	/**
+	 * Get the Bot instance
+	 * @returns Bot instance
+	 */
 	public static getInstance(): Bot {
 		if (!Bot.instance) {
 			Bot.instance = new Bot();
@@ -38,6 +57,9 @@ export default class Bot {
 		return Bot.instance;
 	}
 
+	/**
+	 * Register all slash commands inside src/commands folder
+	 */
 	private registerCommands() {
 		this.creator
 			.withServer(

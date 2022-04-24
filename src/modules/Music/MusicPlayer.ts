@@ -12,7 +12,7 @@ export default class MusicPlayer {
 		this.bot = Bot.getInstance();
 
 		this.player = new Player(this.bot.client, {
-			timeout: 10,
+			timeout: 1,
 		});
 	}
 

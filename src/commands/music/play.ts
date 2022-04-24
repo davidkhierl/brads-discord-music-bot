@@ -5,6 +5,7 @@ import {
 	SlashCreator,
 } from 'slash-create';
 import Music from '../../modules/Music/Music';
+import { startCommandTransaction } from '../../utils/sentry';
 
 class play extends SlashCommand {
 	constructor(creator: SlashCreator) {
@@ -23,6 +24,8 @@ class play extends SlashCommand {
 	}
 
 	async run(ctx: CommandContext) {
+		const transaction = startCommandTransaction(ctx, 'Music');
+
 		const music = new Music(ctx);
 
 		await music.ctx.defer();
@@ -37,6 +40,9 @@ class play extends SlashCommand {
 			if (!music.guildQueue) music.queue.stop();
 			if (reason) throw new Error(`❌ | Error: ${reason}`);
 		});
+
+		transaction.setStatus('OK');
+		transaction.finish();
 
 		return;
 	}

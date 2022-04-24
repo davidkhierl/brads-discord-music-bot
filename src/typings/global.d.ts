@@ -1,3 +1,5 @@
+export {};
+
 declare global {
 	namespace NodeJS {
 		interface ProcessEnv {
@@ -7,7 +9,9 @@ declare global {
 			DISCORD_CLIENT_PUBKEY: string;
 			DISCORD_GUILD_ID: string;
 		}
+
+		interface Global {
+			__rootdir__: string;
+		}
 	}
 }
-
-export {};
