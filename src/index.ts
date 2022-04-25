@@ -4,28 +4,22 @@ import { RewriteFrames } from '@sentry/integrations';
 import '@sentry/tracing';
 
 import dotenv from 'dotenv';
-import Brads from './brads/Brads';
-import MusicModule from './modules/Music/MusicModule';
 import { __rootdir__ } from './root';
+import FrennyDJBot from './bots/FrennyDJBot/FrennyDJBot';
+import chalk from 'chalk';
+import { log } from 'console';
 
 dotenv.config();
 
-/**
- * Brads
- */
-const brads = new Brads();
+log(chalk.bgBlue.bold.white(' Starting Frenny Bots '));
 
 /**
- * Register all modules
+ * Bots
  */
-Brads.registerModule(new MusicModule());
+const frennyDjBotClient = FrennyDJBot.getClient();
 
-/**
- * Notify log when bot is ready
- */
-brads.client.on('ready', (client) => {
-	client.user.setActivity({ name: 'with Frennies', type: 'PLAYING' });
-	console.log(`Logged in as ${client.user.tag}!`);
+frennyDjBotClient.once('ready', () => {
+	log(`${FrennyDJBot.name} ${chalk.bgGreen.black(' Ready ')}`);
 });
 
 /**
