@@ -5,6 +5,7 @@
 	"main": "build/index.js",
 	"repository": "https://github.com/davidkhierl/frenny-discord-bots",
 	"author": "David Khierl <hi@davidkhierkhierl.com>",
+	"private": "true",
 	"license": "MIT",
 	"engines": {
 		"node": ">=16"
@@ -13,8 +14,8 @@
 		"build": "tsc",
 		"dev": "tsc-watch --onSuccess \"nodemon -r dotenv/config --inspect build/index.js\"",
 		"start": "node -r dotenv/config build/index.js",
-		"deploy-commands-dev": "ts-node -r dotenv/config src/deploy-commands.dev.ts",
-		"deploy-commands-prod": "ts-node -r dotenv/config src/deploy-commands.prod.ts"
+		"deploy-commands-dev": "ts-node -r dotenv/config build/deploy-commands.dev.ts",
+		"deploy-commands-prod": "node -r dotenv/config build/deploy-commands.prod.js"
 	},
 	"dependencies": {
 		"@discordjs/builders": "^0.13.0",

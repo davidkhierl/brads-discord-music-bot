@@ -7,6 +7,6 @@ import FrennyDJBot from './bots/FrennyDJBot/FrennyDJBot';
 FrennyDJBot.deployCommandsToGuild(
 	process.env.DISCORD_FRENNY_DEV_GUILD_ID,
 	() => {
-		console.log('Successfully deployed command');
+		console.log('Successfully deployed commands to development guild');
 	}
 );
