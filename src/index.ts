@@ -28,7 +28,7 @@ frennyDjBotClient.once('ready', () => {
 Sentry.init({
 	environment: process.env.NODE_ENV,
 	dsn: 'https://02f1e7085a76466ca57105b20bf00d69@o307506.ingest.sentry.io/6358901',
-	release: 'frenny-discord-bot@' + process.env.npm_package_version,
+	release: process.env.npm_package_version,
 	tracesSampleRate: 1.0,
 	integrations: [
 		new RewriteFrames({
