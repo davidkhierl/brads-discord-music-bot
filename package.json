@@ -1,5 +1,5 @@
 {
-	"name": "frenny-discord-bots",
+	"name": "frenny-discord-bot",
 	"version": "1.0.0",
 	"description": "Frenny Discord Bots 🤘",
 	"main": "build/index.js",
