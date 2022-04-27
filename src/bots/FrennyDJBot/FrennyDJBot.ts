@@ -9,7 +9,7 @@ import {
 	Routes,
 } from 'discord-api-types/v9';
 import SentryHelper from '../../lib/SentryHelper';
-import { Player } from 'discord-music-player';
+import { DMPError, Player } from 'discord-music-player';
 import UserCommandError from '../../utils/UserCommandError';
 
 /**
@@ -102,7 +102,10 @@ export default class FrennyDJBot {
 
 				transaction.finish();
 			} catch (error) {
-				if (error instanceof UserCommandError) {
+				if (
+					error instanceof UserCommandError ||
+					error instanceof DMPError
+				) {
 					await interaction.followUp(error.message);
 				} else {
 					Sentry.captureException(error);
