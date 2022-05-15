@@ -1,6 +1,6 @@
-import { CommandInteraction, CacheType } from 'discord.js';
 import BotCommands from '../../../lib/BotCommands';
 import Music from '../Music';
+import { CacheType, CommandInteraction } from 'discord.js';
 
 export default class playlist extends BotCommands {
 	constructor() {

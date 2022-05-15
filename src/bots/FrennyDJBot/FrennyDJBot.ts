@@ -1,16 +1,16 @@
-import * as Sentry from '@sentry/node';
-import fs from 'fs';
-import path from 'path';
-import { Client, Collection, Intents } from 'discord.js';
 import BotCommands from '../../lib/BotCommands';
+import SentryHelper from '../../lib/SentryHelper';
+import UserCommandError from '../../utils/UserCommandError';
 import { REST } from '@discordjs/rest';
+import * as Sentry from '@sentry/node';
 import {
 	RESTPostAPIApplicationCommandsJSONBody,
 	Routes,
 } from 'discord-api-types/v9';
-import SentryHelper from '../../lib/SentryHelper';
 import { DMPError, Player } from 'discord-music-player';
-import UserCommandError from '../../utils/UserCommandError';
+import { Client, Collection, Intents } from 'discord.js';
+import fs from 'fs';
+import path from 'path';
 
 /**
  * Frenny DJ Bot, This bot add music commands

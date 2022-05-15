@@ -1,7 +1,7 @@
-import { Player, Queue } from 'discord-music-player';
-import { Client, CommandInteraction, Guild, GuildMember } from 'discord.js';
 import UserCommandError from '../../utils/UserCommandError';
 import FrennyDJBot from './FrennyDJBot';
+import { Player, Queue } from 'discord-music-player';
+import { Client, CommandInteraction, Guild, GuildMember } from 'discord.js';
 
 /**
  * Music

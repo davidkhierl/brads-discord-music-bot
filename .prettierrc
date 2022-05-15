@@ -3,5 +3,7 @@
 	"singleQuote": true,
 	"useTabs": true,
 	"tabWidth": 4,
-	"endOfLine": "auto"
+	"endOfLine": "auto",
+	"importOrderSeparation": true,
+	"importOrderSortSpecifiers": true
 }

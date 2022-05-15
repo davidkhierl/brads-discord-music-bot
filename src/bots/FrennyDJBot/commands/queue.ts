@@ -1,7 +1,7 @@
-import { CommandInteraction } from 'discord.js';
 import BotCommands from '../../../lib/BotCommands';
 import UserCommandError from '../../../utils/UserCommandError';
 import Music from '../Music';
+import { CommandInteraction } from 'discord.js';
 
 export default class queue extends BotCommands {
 	constructor() {

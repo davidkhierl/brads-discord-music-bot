@@ -1,13 +1,11 @@
-import * as Sentry from '@sentry/node';
-import { RewriteFrames } from '@sentry/integrations';
-
-import '@sentry/tracing';
-
-import dotenv from 'dotenv';
-import { __rootdir__ } from './root';
 import FrennyDJBot from './bots/FrennyDJBot/FrennyDJBot';
+import { __rootdir__ } from './root';
+import { RewriteFrames } from '@sentry/integrations';
+import * as Sentry from '@sentry/node';
+import '@sentry/tracing';
 import chalk from 'chalk';
 import { log } from 'console';
+import dotenv from 'dotenv';
 
 dotenv.config();
 

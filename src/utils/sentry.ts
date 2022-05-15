@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/node';
 import { Transaction } from '@sentry/types';
-import { CommandContext } from 'slash-create';
 import { capitalize } from 'lodash';
+import { CommandContext } from 'slash-create';
 
 export const startCommandTransaction = (
 	ctx: CommandContext,

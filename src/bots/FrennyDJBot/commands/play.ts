@@ -1,6 +1,6 @@
-import { CommandInteraction } from 'discord.js';
 import BotCommands from '../../../lib/BotCommands';
 import Music from '../Music';
+import { CommandInteraction } from 'discord.js';
 
 export default class play extends BotCommands {
 	constructor() {
