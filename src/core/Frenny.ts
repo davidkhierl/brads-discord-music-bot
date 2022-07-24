@@ -1,5 +1,4 @@
 import BotWithCommands from './BotWithCommands.js';
-import FrennyError from './FrennyError.js';
 import chalk from 'chalk';
 import { log } from 'console';
 import { Collection } from 'discord.js';
