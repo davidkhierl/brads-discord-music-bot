@@ -256,4 +256,17 @@ export default class BotWithCommands {
 			}
 		);
 	}
+
+	/**
+	 * Deploy the bot commands globally
+	 */
+	public async deployCommandsGlobally() {
+		const commands = await this.getAllCommandsToJSON();
+
+		if (!commands) throw new FrennyError('No Commands Found');
+
+		return this.rest.put(Routes.applicationCommands(this.appId), {
+			body: commands,
+		});
+	}
 }

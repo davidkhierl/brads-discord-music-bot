@@ -63,27 +63,20 @@ export default class Frenny {
 				Frenny.bots.forEach((bot) => {
 					bot.deployCommandsToGuild(
 						process.env.DISCORD_FRENNY_DEV_GUILD_ID
-					)
-						.then(() => {
-							log(
-								chalk.green('[Deployed]:'),
-								chalk.blue(bot.name)
-							);
-						})
-						.catch((reason) => {
-							if (reason instanceof Error)
-								throw new FrennyError(reason.message, reason);
-						});
+					).then(() => {
+						log(chalk.green('[Deployed]:'), chalk.blue(bot.name));
+					});
 				});
 				return;
 
 			case 'global':
-				// TODO
-				console.log(
-					chalk.yellow(
-						'Global commands deployment not yet implemented'
-					)
-				);
+				log(chalk.blue('Deploying Commands Globally'));
+
+				Frenny.bots.forEach((bot) => {
+					bot.deployCommandsGlobally().then(() => {
+						log(chalk.green('[Deployed]:'), chalk.blue(bot.name));
+					});
+				});
 				return;
 
 			default:
