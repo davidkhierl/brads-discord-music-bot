@@ -1,16 +1,12 @@
-import BotCommands from '../../lib/BotCommands';
-import SentryHelper from '../../lib/SentryHelper';
-import UserCommandError from '../../utils/UserCommandError';
-import { REST } from '@discordjs/rest';
-import * as Sentry from '@sentry/node';
-import {
-	RESTPostAPIApplicationCommandsJSONBody,
-	Routes,
-} from 'discord-api-types/v9';
-import { DMPError, Player } from 'discord-music-player';
-import { Client, Collection, Intents } from 'discord.js';
-import fs from 'fs';
+import BotWithCommands from '../../core/BotWithCommands.js';
+import Frenny from '../../core/Frenny.js';
+import { Player } from 'discord-music-player';
+import { Client, IntentsBitField, TextChannel } from 'discord.js';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Frenny DJ Bot, This bot add music commands
@@ -22,124 +18,96 @@ import path from 'path';
  * streaming platform will be added soon like
  * Spotify.
  */
-export default class FrennyDJBot {
-	/**
-	 * Frenny DJ Bot instance
-	 */
-	private static instance: FrennyDJBot;
-
-	/**
-	 * Frenny DJ Bot client
-	 */
-	readonly client: Client<boolean>;
-
-	/**
-	 * Frenny DJ Bot commands collection
-	 */
-	readonly commands: Collection<string, BotCommands>;
-
-	/**
-	 * Frenny DJ Bot commands directory path
-	 */
-	static readonly commandsDir = path.join(__dirname, 'commands');
-
-	/**
-	 * Frenny DJ Bot REST instance
-	 */
-	private static readonly rest = new REST({ version: '9' }).setToken(
-		process.env.DISCORD_FRENNY_DJ_BOT_TOKEN
-	);
-
+export default class FrennyDJBot extends BotWithCommands {
 	/**
 	 * Frenny DJ Player instance
 	 */
-	readonly player: Player;
+	public static player: Player<TextChannel>;
 
-	private constructor() {
-		this.client = new Client({
-			intents: [
-				Intents.FLAGS.GUILDS,
-				Intents.FLAGS.GUILD_MESSAGES,
-				Intents.FLAGS.GUILD_VOICE_STATES,
-			],
+	constructor() {
+		super({
+			client: new Client({
+				intents: [
+					IntentsBitField.Flags.Guilds,
+					IntentsBitField.Flags.GuildMessages,
+					IntentsBitField.Flags.GuildVoiceStates,
+				],
+			}),
+			commandsDir: path.join(__dirname, 'commands'),
+			eventsDir: path.join(__dirname, 'events'),
+			token: process.env.DISCORD_FRENNY_DJ_BOT_TOKEN,
+			appId: process.env.DISCORD_FRENNY_DJ_APP_ID,
 		});
-		this.client.login(process.env.DISCORD_FRENNY_DJ_BOT_TOKEN);
-		this.commands = new Collection();
-		this.setCommandsCollection();
-		this.listenOnInteractionCreate();
-		this.player = new Player(this.client, { timeout: 10 });
+
+		this.name = FrennyDJBot.name;
+
+		FrennyDJBot.player = new Player<TextChannel>(this.client, {
+			timeout: 10,
+		});
+
+		// this.listenOnInteractionCreate();
+
 		this.registerPlayerEvents();
 	}
-	/**
-	 * Set commands collections
-	 */
-	private setCommandsCollection() {
-		const commands = FrennyDJBot.getAllCommandsInstance();
 
-		for (const command of commands) {
-			this.commands.set(command.slash.name, command);
-		}
-	}
+	// private listenOnInteractionCreate() {
+	// 	this.client.on('interactionCreate', async (interaction) => {
+	// 		if (!interaction.isChatInputCommand()) return;
 
-	private listenOnInteractionCreate() {
-		this.client.on('interactionCreate', async (interaction) => {
-			// TODO: Accept button command
-			if (!interaction.isCommand()) return;
+	// 		const command = this.commands.get(interaction.commandName);
 
-			const command = this.commands.get(interaction.commandName);
+	// 		if (!command) return;
 
-			if (!command) return;
+	// 		try {
+	// 			const transaction = SentryHelper.startCommandInteractionCreate(
+	// 				interaction,
+	// 				this.client
+	// 			);
 
-			try {
-				const transaction = SentryHelper.startCommandInteractionCreate(
-					interaction,
-					this.client
-				);
+	// 			await interaction.deferReply({ ephemeral: true });
 
-				await interaction.deferReply({ ephemeral: true });
+	// 			await command.execute(interaction);
 
-				await command.execute(interaction);
+	// 			transaction.finish();
+	// 		} catch (error) {
+	// 			if (
+	// 				error instanceof UserCommandError ||
+	// 				error instanceof DMPError
+	// 			) {
+	// 				await interaction.followUp(error.message);
+	// 			} else {
+	// 				Sentry.captureException(error);
 
-				transaction.finish();
-			} catch (error) {
-				if (
-					error instanceof UserCommandError ||
-					error instanceof DMPError
-				) {
-					await interaction.followUp(error.message);
-				} else {
-					Sentry.captureException(error);
+	// 				await interaction.followUp({
+	// 					content:
+	// 						'😵 | There was a problem while executing this command!',
+	// 				});
 
-					await interaction.followUp({
-						content:
-							'😵 | There was a problem while executing this command!',
-					});
-
-					console.error(error);
-				}
-			}
-		});
-	}
+	// 				console.error(error);
+	// 			}
+	// 		}
+	// 	});
+	// }
 
 	/**
 	 * Register all Player events
 	 */
 	private registerPlayerEvents() {
-		this.player
+		FrennyDJBot.player
 			// Emitted when channel was empty.
 			.on('channelEmpty', (queue) => {
-				queue.data.send(
+				queue.data?.send(
 					'😴💤💤💤 Everyone left the voice channel, ending queue. Bye Frennies! 👋'
 				);
 			})
 			// Emitted when a song was added to the queue.
 			.on('songAdd', (queue, song) => {
 				if (!song.isFirst)
-					queue.data.send(`✔️ | Added to queue **${song}**`);
+					queue.data?.send(`✔️ | Added to queue **${song}**`);
 			})
 			// Emitted when a playlist was added to the queue.
 			.on('playlistAdd', (queue, playlist) => {
-				queue.data.send(
+				queue.data?.send(
 					`💿 | Playlist: **${playlist}** with 🎶 **${playlist.songs.length} songs** added to the queue in **${queue.connection?.channel.name}**`
 				);
 			})
@@ -150,23 +118,23 @@ export default class FrennyDJBot {
 			)
 			// Emitted when the queue was destroyed (either by ending or stopping).
 			.on('queueEnd', (queue) => {
-				queue.data.send('🥳 | Queue finished!');
+				queue.data?.send('🥳 | Queue finished!');
 			})
 			// Emitted when a song changed.
 			.on('songChanged', (queue, newSong, _oldSong) => {
-				queue.data.send(
+				queue.data?.send(
 					`🎶 | Now playing: **${newSong}** in **${queue.connection?.channel.name}**`
 				);
 			})
 			// Emitted when a first song in the queue started playing.
 			.on('songFirst', (queue, song) => {
-				queue.data.send(
+				queue.data?.send(
 					`🎶 | Started playing: **${song}** in **${queue.connection?.channel.name}**`
 				);
 			})
 			// Emitted when someone disconnected the bot from the channel.
 			.on('clientDisconnect', (queue) => {
-				queue.data.send(
+				queue.data?.send(
 					`😔 **${this.client.user?.username}** was kicked from the voice channel, queue ended.`
 				);
 			})
@@ -174,110 +142,33 @@ export default class FrennyDJBot {
 			.on('clientUndeafen', (_queue) => console.log('I got undefeanded.'))
 			// Emitted when there was an error in runtime
 			.on('error', (error, queue) => {
-				queue.data.send(
+				queue.data?.send(
 					`☠️ | Oops.. something went wrong. **Error: ${error}**`
 				);
 				console.log(`Error: ${error} in ${queue.guild.name}`);
 			});
 	}
+}
 
-	/**
-	 * Read all commands from the bot commands directory
-	 * @returns Array of BotCommands instance
-	 */
-	public static getAllCommandsInstance() {
-		const commandFiles = fs
-			.readdirSync(FrennyDJBot.commandsDir)
-			.filter((file) => file.match(/(\.[tj]s$)/g));
+/**
+ * FrennyDJBot type guard
+ * @param bot BotWithCommands
+ * @returns boolean
+ */
+export function isFrennyDJBot(bot?: BotWithCommands): bot is FrennyDJBot {
+	return bot instanceof FrennyDJBot;
+}
 
-		return commandFiles.map(
-			(file) =>
-				new (require(path.join(
-					FrennyDJBot.commandsDir,
-					file
-				)).default)() as BotCommands
-		);
-	}
+/**
+ * Get instance of FrennyDJBot from Frenny bots collection
+ * @param frenny Frenny
+ * @returns instance of FrennyDJBot
+ */
+export function getFrennyDJBotInstance(): FrennyDJBot {
+	const instance = Frenny.bots.get(FrennyDJBot.name);
 
-	/**
-	 * Deploy the bot commands to a guild
-	 * @param guildId The guild id to deploy the commands to
-	 */
-	public static async deployCommandsToGuild(
-		guildId: string,
-		callback?: () => void
-	) {
-		const commands = FrennyDJBot.getAllCommandsToJSON();
+	if (!isFrennyDJBot(instance))
+		throw new Error('No Instance of FrennyDJBot Found');
 
-		FrennyDJBot.rest
-			.put(
-				Routes.applicationGuildCommands(
-					process.env.DISCORD_FRENNY_DJ_APP_ID,
-					guildId
-				),
-				{
-					body: commands,
-				}
-			)
-			.then(callback)
-			.catch(console.error);
-	}
-
-	/**
-	 * Deploy the bot commands to a globally
-	 * @param guildId The guild id to deploy the commands to
-	 */
-	public static async deployCommandsGlobally(callback?: () => void) {
-		const commands = FrennyDJBot.getAllCommandsToJSON();
-
-		FrennyDJBot.rest
-			.put(
-				Routes.applicationCommands(
-					process.env.DISCORD_FRENNY_DJ_APP_ID
-				),
-				{
-					body: commands,
-				}
-			)
-			.then(callback)
-			.catch(console.error);
-	}
-
-	/**
-	 * Get all final commands ready to send to Discord
-	 * @returns Returns the final data that should be sent to Discord.
-	 */
-	public static getAllCommandsToJSON(): RESTPostAPIApplicationCommandsJSONBody[] {
-		return FrennyDJBot.getAllCommandsInstance().map((command) =>
-			command.slash.toJSON()
-		);
-	}
-
-	/**
-	 * Get FrennyDJBot instance
-	 * @returns Frenny DJ Bot class instance
-	 */
-	public static getInstance(): FrennyDJBot {
-		if (!this.instance) {
-			this.instance = new FrennyDJBot();
-		}
-
-		return this.instance;
-	}
-
-	/**
-	 * Get Frenny DJ Bot client instance
-	 * @returns Frenny DJ Bot client instance
-	 */
-	public static getClient(): Client<boolean> {
-		return FrennyDJBot.getInstance().client;
-	}
-
-	/**
-	 * Get Frenny DJ Bot Player instance
-	 * @returns Player instance
-	 */
-	public static getPlayer(): Player {
-		return FrennyDJBot.getInstance().player;
-	}
+	return instance;
 }

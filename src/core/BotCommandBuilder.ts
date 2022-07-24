@@ -2,8 +2,9 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { CommandInteraction } from 'discord.js';
 
-export default class BotCommands {
+export default class BotCommandBuilder {
 	readonly slash: SlashCommandBuilder;
+
 	constructor() {
 		this.slash = new SlashCommandBuilder();
 	}

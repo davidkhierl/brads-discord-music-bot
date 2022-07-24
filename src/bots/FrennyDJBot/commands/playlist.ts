@@ -1,8 +1,9 @@
-import BotCommands from '../../../lib/BotCommands';
-import Music from '../Music';
+import BotCommandBuilder from '../../../core/BotCommandBuilder.js';
+import FrennyDJBot from '../FrennyDJBot.js';
+import Music from '../Music.js';
 import { CacheType, CommandInteraction } from 'discord.js';
 
-export default class playlist extends BotCommands {
+export default class playlist extends BotCommandBuilder {
 	constructor() {
 		super();
 		this.slash
@@ -19,9 +20,9 @@ export default class playlist extends BotCommands {
 	}
 
 	async execute(interaction: CommandInteraction<CacheType>): Promise<void> {
-		if (!interaction.isCommand()) return;
+		if (!interaction.isChatInputCommand()) return;
 
-		const music = new Music(interaction);
+		const music = new Music(interaction, FrennyDJBot.player);
 
 		await music.joinVoiceChannel();
 

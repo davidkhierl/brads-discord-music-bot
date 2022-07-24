@@ -1,9 +1,10 @@
-import BotCommands from '../../../lib/BotCommands';
-import UserCommandError from '../../../utils/UserCommandError';
-import Music from '../Music';
+import BotCommandBuilder from '../../../core/BotCommandBuilder.js';
+import UserCommandError from '../../../core/UserCommandError.js';
+import FrennyDJBot from '../FrennyDJBot.js';
+import Music from '../Music.js';
 import { CommandInteraction } from 'discord.js';
 
-export default class skip extends BotCommands {
+export default class skip extends BotCommandBuilder {
 	constructor() {
 		super();
 		this.slash
@@ -19,9 +20,9 @@ export default class skip extends BotCommands {
 	}
 
 	async execute(interaction: CommandInteraction): Promise<void> {
-		if (!interaction.isCommand()) return;
+		if (!interaction.isChatInputCommand()) return;
 
-		const music = new Music(interaction);
+		const music = new Music(interaction, FrennyDJBot.player);
 
 		await music.joinVoiceChannel();
 

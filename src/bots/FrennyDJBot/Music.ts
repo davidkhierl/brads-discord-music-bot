@@ -1,7 +1,12 @@
-import UserCommandError from '../../utils/UserCommandError';
-import FrennyDJBot from './FrennyDJBot';
+import UserCommandError from '../../core/UserCommandError.js';
 import { Player, Queue } from 'discord-music-player';
-import { Client, CommandInteraction, Guild, GuildMember } from 'discord.js';
+import {
+	CacheType,
+	ChatInputCommandInteraction,
+	Client,
+	Guild,
+	GuildMember,
+} from 'discord.js';
 
 /**
  * Music
@@ -10,12 +15,12 @@ export default class Music {
 	/**
 	 * Bot client instance
 	 */
-	private readonly client: Client;
+	private readonly client: Client<boolean>;
 
 	/**
 	 * Interaction command
 	 */
-	readonly interaction: CommandInteraction;
+	readonly interaction: ChatInputCommandInteraction<CacheType>;
 
 	/**
 	 * DMPlayer instance
@@ -51,10 +56,15 @@ export default class Music {
 	 * Class for playing and controlling songs queue.
 	 * @param interaction Command interaction
 	 */
-	constructor(interaction: CommandInteraction) {
-		this.client = FrennyDJBot.getClient();
+	constructor(
+		interaction: ChatInputCommandInteraction<CacheType>,
+		player: Player
+	) {
+		this.client = interaction.client;
+
 		this.interaction = interaction;
-		this.player = FrennyDJBot.getPlayer();
+
+		this.player = player;
 
 		if (!this.interaction.guildId)
 			throw new Error('❌ | Error: guild id missing.');
