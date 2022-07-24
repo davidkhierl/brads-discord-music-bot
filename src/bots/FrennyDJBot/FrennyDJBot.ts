@@ -41,49 +41,8 @@ export default class FrennyDJBot extends BotWithCommands {
 			timeout: 10,
 		});
 
-		// this.listenOnInteractionCreate();
-
 		this.registerPlayerEvents();
 	}
-
-	// private listenOnInteractionCreate() {
-	// 	this.client.on('interactionCreate', async (interaction) => {
-	// 		if (!interaction.isChatInputCommand()) return;
-
-	// 		const command = this.commands.get(interaction.commandName);
-
-	// 		if (!command) return;
-
-	// 		try {
-	// 			const transaction = SentryHelper.startCommandInteractionCreate(
-	// 				interaction,
-	// 				this.client
-	// 			);
-
-	// 			await interaction.deferReply({ ephemeral: true });
-
-	// 			await command.execute(interaction);
-
-	// 			transaction.finish();
-	// 		} catch (error) {
-	// 			if (
-	// 				error instanceof UserCommandError ||
-	// 				error instanceof DMPError
-	// 			) {
-	// 				await interaction.followUp(error.message);
-	// 			} else {
-	// 				Sentry.captureException(error);
-
-	// 				await interaction.followUp({
-	// 					content:
-	// 						'😵 | There was a problem while executing this command!',
-	// 				});
-
-	// 				console.error(error);
-	// 			}
-	// 		}
-	// 	});
-	// }
 
 	/**
 	 * Register all Player events
