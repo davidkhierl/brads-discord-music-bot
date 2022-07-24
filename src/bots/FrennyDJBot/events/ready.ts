@@ -1,15 +1,12 @@
 import { BotEvent } from '../../../core/BotWithCommands.js';
-import Frenny from '../../../core/Frenny.js';
-import FrennyDJBot from '../FrennyDJBot.js';
+import chalk from 'chalk';
+import { log } from 'console';
 
 const ready: BotEvent = {
 	name: 'ready',
 	once: true,
 	execute(client) {
-		Frenny.spinner.succeed(FrennyDJBot.name, {
-			textColor: 'green',
-			prefixColor: 'green',
-		});
+		log(chalk.greenBright('[Ready]:'), chalk.blue(`${client.user.tag}`));
 	},
 };
 

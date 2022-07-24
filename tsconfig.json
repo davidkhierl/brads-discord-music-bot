@@ -1,6 +1,6 @@
 {
 	"compilerOptions": {
-		"target": "es6",
+		"target": "ESNext",
 		"module": "NodeNext",
 		"lib": ["ESNext", "DOM"],
 		"outDir": "./build",
@@ -23,12 +23,14 @@
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"forceConsistentCasingInFileNames": true,
+		"useUnknownInCatchVariables": false,
 		"noEmitHelpers": true,
 		"importHelpers": true,
 		"sourceMap": true
 	},
 	"ts-node": {
-		"files": true
+		"files": true,
+		"esm": true
 	},
 	"files": ["src/index.ts", "src/typings/global.d.ts"],
 	"exclude": ["node_modules", "build"],

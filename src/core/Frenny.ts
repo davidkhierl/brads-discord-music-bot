@@ -1,6 +1,5 @@
 import BotWithCommands from './BotWithCommands.js';
 import FrennyError from './FrennyError.js';
-import Spinnies from '@trufflesuite/spinnies';
 import chalk from 'chalk';
 import { log } from 'console';
 import { Collection } from 'discord.js';
@@ -15,12 +14,6 @@ export default class Frenny {
 	 * Collection of registered bots
 	 */
 	public static bots = new Collection<string, BotWithCommands>();
-
-	/**
-	 * Spinner
-	 */
-	// @ts-ignore
-	public static readonly spinner = new Spinnies();
 
 	private constructor(...bots: BotWithCommands[]) {
 		log(chalk.bgBlue.bold.white(' Starting Frenny Bots '));
@@ -47,9 +40,6 @@ export default class Frenny {
 		for (const bot of bots) {
 			if (bot.name) {
 				Frenny.bots.set(bot.name, bot);
-				Frenny.spinner.add(bot.name, {
-					text: `Starting ${bot.name}`,
-				});
 			}
 		}
 	}
@@ -59,57 +49,46 @@ export default class Frenny {
 	 */
 	public static deployCommands() {
 		if (!Frenny.bots.size) {
-			console.error(
-				chalk.bgRed.bold.white(' Deploy Commands Failed '),
-				'0 bots instance found'
-			);
+			log(chalk.blue('Deploying Commands'));
+			console.error(chalk.redBright('[Failed]'), '0 bots instance found');
 			return;
 		}
 
-		Frenny.bots.forEach((bot) => {
-			Frenny.spinner.add(`${bot.name} deploy commands`, {
-				text: `Deploy ${bot.name} commands to guild ${process.env.DISCORD_FRENNY_DEV_GUILD_ID}`,
-			});
-
-			switch (process.env.DEPLOY_COMMANDS) {
-				case 'guild':
+		switch (process.env.DEPLOY_COMMANDS) {
+			case 'guild':
+				log(
+					chalk.blue('Deploying Commands to Guild:'),
+					process.env.DISCORD_FRENNY_DEV_GUILD_ID
+				);
+				Frenny.bots.forEach((bot) => {
 					bot.deployCommandsToGuild(
 						process.env.DISCORD_FRENNY_DEV_GUILD_ID
 					)
 						.then(() => {
-							Frenny.spinner.succeed(
-								`${bot.name} deploy commands`,
-								{
-									text: `Deploy ${bot.name} commands to guild ${process.env.DISCORD_FRENNY_DEV_GUILD_ID}`,
-									textColor: 'blue',
-									prefixColor: 'green',
-								}
+							log(
+								chalk.green('[Deployed]:'),
+								chalk.blue(bot.name)
 							);
 						})
 						.catch((reason) => {
 							if (reason instanceof Error)
 								throw new FrennyError(reason.message, reason);
 						});
-					return;
+				});
+				return;
 
-				case 'global':
-					// TODO
-					console.log(
-						chalk.yellow(
-							'Global commands deployment not yet implemented'
-						)
-					);
-					return;
+			case 'global':
+				// TODO
+				console.log(
+					chalk.yellow(
+						'Global commands deployment not yet implemented'
+					)
+				);
+				return;
 
-				default:
-					Frenny.spinner.warn(`${bot.name} deploy commands`, {
-						text: `Skipped deploy ${bot.name} commands`,
-						textColor: 'yellow',
-						prefixColor: 'yellow',
-						indent: 2,
-					});
-					return;
-			}
-		});
+			default:
+				log(chalk.yellow('Skipped Commands Deployment'));
+				return;
+		}
 	}
 }

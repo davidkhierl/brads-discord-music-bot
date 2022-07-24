@@ -13,10 +13,8 @@
 	"type": "module",
 	"scripts": {
 		"build": "tsc",
-		"dev": "tsc-watch --onSuccess \"node -r dotenv/config --inspect build/index.js\"",
-		"start": "node -r dotenv/config build/index.js",
-		"deploy-commands-dev": "ts-node -r dotenv/config build/deploy-commands.dev.js",
-		"deploy-commands-prod": "node -r dotenv/config build/deploy-commands.prod.js"
+		"dev": "nodemon -r dotenv/config ./src/index.ts",
+		"start": "node -r dotenv/config build/index.js"
 	},
 	"dependencies": {
 		"@discordjs/builders": "^1.0.0",
@@ -24,7 +22,6 @@
 		"@sentry/integrations": "^7.7.0",
 		"@sentry/node": "^7.7.0",
 		"@sentry/tracing": "^7.7.0",
-		"@trufflesuite/spinnies": "^0.1.0",
 		"chalk": "^5.0.1",
 		"discord-api-types": "0.36.3",
 		"discord-music-player": "^9.0.2",
@@ -46,7 +43,6 @@
 		"nodemon": "^2.0.19",
 		"prettier": "^2.7.1",
 		"ts-node": "^10.9.1",
-		"tsc-watch": "^5.0.3",
 		"typescript": "^4.7.4"
 	}
 }
