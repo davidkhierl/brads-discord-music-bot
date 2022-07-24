@@ -6,7 +6,7 @@ import { CommandInteraction } from 'discord.js';
 
 export default class queue extends BotCommandBuilder {
 	constructor() {
-		super();
+		super({ deferReply: true, ephemeral: true });
 		this.slash
 			.setName('queue')
 			.setDescription('Display songs in queue')

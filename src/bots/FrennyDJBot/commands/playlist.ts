@@ -5,7 +5,7 @@ import { CacheType, CommandInteraction } from 'discord.js';
 
 export default class playlist extends BotCommandBuilder {
 	constructor() {
-		super();
+		super({ deferReply: true, ephemeral: true });
 		this.slash
 			.setName('playlist')
 			.setDescription('Play a playlist from YouTube')

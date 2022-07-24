@@ -6,7 +6,7 @@ import { CommandInteraction } from 'discord.js';
 
 export default class stop extends BotCommandBuilder {
 	constructor() {
-		super();
+		super({ deferReply: true, ephemeral: true });
 		this.slash.setName('stop').setDescription('Stop playing music');
 	}
 

@@ -6,7 +6,7 @@ import { CommandInteraction } from 'discord.js';
 
 export default class skip extends BotCommandBuilder {
 	constructor() {
-		super();
+		super({ deferReply: true, ephemeral: true });
 		this.slash
 			.setName('skip')
 			.setDescription('Skip the current song being played')

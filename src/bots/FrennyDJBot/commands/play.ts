@@ -5,7 +5,7 @@ import { CommandInteraction } from 'discord.js';
 
 export default class play extends BotCommandBuilder {
 	constructor() {
-		super();
+		super({ deferReply: true, ephemeral: true });
 		this.slash
 			.setName('play')
 			.setDescription('Play a song from YouTube')

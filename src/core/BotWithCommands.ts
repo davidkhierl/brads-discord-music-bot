@@ -1,6 +1,7 @@
 import SentryHelper from '../helpers/SentryHelper.js';
 import BotCommandBuilder from './BotCommandBuilder.js';
 import FrennyError from './FrennyError.js';
+import UserCommandError from './UserCommandError.js';
 import { REST } from '@discordjs/rest';
 import * as Sentry from '@sentry/node';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
@@ -67,6 +68,12 @@ export default class BotWithCommands {
 	 */
 	private readonly rest: REST;
 
+	/**
+	 * Default error reply message
+	 */
+	private readonly defaultErrorReply: string =
+		'Sorry there was an error executing this command';
+
 	constructor(props: BotWithCommandsConstructor) {
 		this.client = props.client;
 
@@ -83,17 +90,6 @@ export default class BotWithCommands {
 		this.rest = new REST({ version: '10' }).setToken(props.token);
 
 		this.client.login(props.token);
-
-		// TODO:
-		// await prisma.bot.upsert({
-		// 	where: { id: this.client.user.id },
-		// 	update: { name: this.client.user.username },
-		// 	create: {
-		// 		id: this.client.user.id,
-		// 		name: this.client.user.username,
-		// 	},
-		// 	select: { id: true },
-		// });
 
 		this.loadEvents();
 
@@ -172,24 +168,41 @@ export default class BotWithCommands {
 
 				transaction.finish();
 			} catch (error) {
+				if (error instanceof UserCommandError) {
+					if (command.deferReply)
+						await interaction.followUp({
+							ephemeral: true,
+							content: error.message,
+						});
+					else
+						await interaction.reply({
+							ephemeral: true,
+							content: error.message,
+						});
+					return;
+				}
 				if (error instanceof Error) {
-					await interaction.followUp(error.message);
-					console.log(error);
-				} else {
-					// TODO: Decouple from sentry.
 					Sentry.captureException(error);
-
-					await interaction.reply({
-						content:
-							'There was an error while executing this command!',
-						ephemeral: true,
-					});
-
-					console.log(
-						'Something went wrong listening on interaction create'
-					);
+					if (command.deferReply)
+						await interaction.followUp({
+							ephemeral: true,
+							content: this.defaultErrorReply,
+						});
+					else
+						await interaction.reply({
+							ephemeral: true,
+							content: this.defaultErrorReply,
+						});
+					console.log(error);
+					return;
 				}
 			}
+
+			// else {
+			// 	// TODO: Decouple from sentry.
+			// 	Sentry.captureException(error);
+
+			// }
 		});
 	}
 
