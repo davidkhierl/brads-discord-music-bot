@@ -1,6 +1,8 @@
+import SentryHelper from '../helpers/SentryHelper.js';
 import BotCommandBuilder from './BotCommandBuilder.js';
 import FrennyError from './FrennyError.js';
 import { REST } from '@discordjs/rest';
+import * as Sentry from '@sentry/node';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
 import { Client, ClientEvents, Collection, Routes } from 'discord.js';
 import fs from 'fs';
@@ -129,7 +131,7 @@ export default class BotWithCommands {
 	}
 
 	/**
-	 * Listen commands invocation
+	 * Listen to all command interaction
 	 */
 	private listenOnInteractionsCreate() {
 		this.client.on('interactionCreate', async (interaction) => {
@@ -140,15 +142,31 @@ export default class BotWithCommands {
 			if (!command) return;
 
 			try {
+				// TODO: Decouple from sentry.
+				const transaction = SentryHelper.startCommandInteractionCreate(
+					interaction,
+					this.client
+				);
+
 				await interaction.deferReply({ ephemeral: true });
 
 				await command.execute(interaction);
 			} catch (error) {
-				if (error instanceof Error) console.log(error.message);
-				await interaction.reply({
-					content: 'There was an error while executing this command!',
-					ephemeral: true,
-				});
+				if (error instanceof Error) {
+					await interaction.followUp(error.message);
+					console.log(error.message);
+				} else {
+					// TODO: Decouple from sentry.
+					Sentry.captureException(error);
+
+					await interaction.reply({
+						content:
+							'There was an error while executing this command!',
+						ephemeral: true,
+					});
+
+					console.log(error);
+				}
 			}
 		});
 	}
