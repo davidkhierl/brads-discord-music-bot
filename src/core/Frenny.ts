@@ -59,6 +59,16 @@ export default class Frenny {
 					chalk.blue('Deploying Commands to Guild:'),
 					process.env.DISCORD_FRENNY_DEV_GUILD_ID
 				);
+
+				if (process.env.NODE_ENV === 'production') {
+					log(
+						chalk.red(
+							'[Failed]: Deploying commands to dev guild is not allowed in production'
+						)
+					);
+					return;
+				}
+
 				Frenny.bots.forEach((bot) => {
 					bot.deployCommandsToGuild(
 						process.env.DISCORD_FRENNY_DEV_GUILD_ID
