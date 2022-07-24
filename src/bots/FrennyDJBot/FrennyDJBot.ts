@@ -1,12 +1,8 @@
 import BotWithCommands from '../../core/BotWithCommands.js';
 import Frenny from '../../core/Frenny.js';
+import dirResolver from '../../helpers/dirResolver.js';
 import { Player } from 'discord-music-player';
 import { Client, IntentsBitField, TextChannel } from 'discord.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 /**
  * Frenny DJ Bot, This bot add music commands
@@ -33,8 +29,8 @@ export default class FrennyDJBot extends BotWithCommands {
 					IntentsBitField.Flags.GuildVoiceStates,
 				],
 			}),
-			commandsDir: path.join(__dirname, 'commands'),
-			eventsDir: path.join(__dirname, 'events'),
+			commandsDir: dirResolver(import.meta.url, 'commands'),
+			eventsDir: dirResolver(import.meta.url, 'events'),
 			token: process.env.DISCORD_FRENNY_DJ_BOT_TOKEN,
 			appId: process.env.DISCORD_FRENNY_DJ_APP_ID,
 		});

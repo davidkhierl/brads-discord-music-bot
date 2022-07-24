@@ -1,18 +1,14 @@
 import BotWithCommands from '../../core/BotWithCommands.js';
 import Frenny from '../../core/Frenny.js';
+import dirResolver from '../../helpers/dirResolver.js';
 import { Client } from 'discord.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 export default class FrennyAutomateBot extends BotWithCommands {
 	constructor() {
 		super({
 			client: new Client({ intents: [] }),
-			commandsDir: path.join(__dirname, 'commands'),
-			eventsDir: path.join(__dirname, 'events'),
+			commandsDir: dirResolver(import.meta.url, 'commands'),
+			eventsDir: dirResolver(import.meta.url, 'events'),
 			token: process.env.DISCORD_FRENNY_AUTOMATE_BOT_TOKEN,
 			appId: process.env.DISCORD_FRENNY_AUTOMATE_APP_ID,
 		});

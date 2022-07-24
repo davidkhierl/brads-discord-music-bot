@@ -1,6 +1,6 @@
 import BotCommandBuilder from '../../core/BotCommandBuilder.js';
 import UserCommandError from '../../core/UserCommandError.js';
-import SentryHelper from '../../utils/SentryHelper.js';
+import SentryHelper from '../../helpers/SentryHelper.js';
 import { REST } from '@discordjs/rest';
 import * as Sentry from '@sentry/node';
 import {
