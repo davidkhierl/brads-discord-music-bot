@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Bot {
+  id    String  @id @map("_id") @db.String
+  name  String
+  guild Guild[]
+}
+
+model Guild {
+  id             String  @id @map("_id") @db.String
+  name           String
+  bot            Bot     @relation(fields: [botId], references: [id])
+  roles          Role[]
+  newMembersRole String? @db.String
+  botId          String  @db.String
+  roleId         String? @db.String
+}
+
+model Role {
+  id      String  @id @map("_id") @db.String
+  name    String
+  guild   Guild?  @relation(fields: [guildId], references: [id])
+  guildId String? @db.String
+}

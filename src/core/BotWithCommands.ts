@@ -4,7 +4,7 @@ import FrennyError from './FrennyError.js';
 import { REST } from '@discordjs/rest';
 import * as Sentry from '@sentry/node';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { Client, ClientEvents, Collection, Routes } from 'discord.js';
+import { Client, ClientEvents, Collection, Guild, Routes } from 'discord.js';
 import fs from 'fs';
 import path from 'path';
 import { pathToFileURL } from 'url';
@@ -12,11 +12,15 @@ import { pathToFileURL } from 'url';
 interface BotEventModule {
 	name: keyof ClientEvents;
 	once?: boolean;
-	execute: (...args: any[]) => void;
+	execute: (...args: any[]) => Promise<void>;
 }
 
-export interface BotEvent extends BotEventModule {
-	execute: (client: Client<true>) => void;
+export interface BotEventClient extends BotEventModule {
+	execute: (client: Client<true>) => Promise<void>;
+}
+
+export interface BotEventGuild extends BotEventModule {
+	execute: (client: Guild) => Promise<void>;
 }
 
 export interface BotWithCommandsConstructor {
@@ -80,6 +84,17 @@ export default class BotWithCommands {
 
 		this.client.login(props.token);
 
+		// TODO:
+		// await prisma.bot.upsert({
+		// 	where: { id: this.client.user.id },
+		// 	update: { name: this.client.user.username },
+		// 	create: {
+		// 		id: this.client.user.id,
+		// 		name: this.client.user.username,
+		// 	},
+		// 	select: { id: true },
+		// });
+
 		this.loadEvents();
 
 		this.listenOnInteractionsCreate();
@@ -126,7 +141,7 @@ export default class BotWithCommands {
 				)
 			);
 		} catch (error) {
-			if (error instanceof Error) console.error(error.message);
+			if (error instanceof Error) console.error(error);
 		}
 	}
 
@@ -142,19 +157,24 @@ export default class BotWithCommands {
 			if (!command) return;
 
 			try {
-				// TODO: Decouple from sentry.
+				// TODO: Convert SentryHelper to be used as decorator
 				const transaction = SentryHelper.startCommandInteractionCreate(
 					interaction,
 					this.client
 				);
 
-				await interaction.deferReply({ ephemeral: true });
+				if (command.deferReply)
+					await interaction.deferReply({
+						ephemeral: command.ephemeral,
+					});
 
 				await command.execute(interaction);
+
+				transaction.finish();
 			} catch (error) {
 				if (error instanceof Error) {
 					await interaction.followUp(error.message);
-					console.log(error.message);
+					console.log(error);
 				} else {
 					// TODO: Decouple from sentry.
 					Sentry.captureException(error);
@@ -165,7 +185,9 @@ export default class BotWithCommands {
 						ephemeral: true,
 					});
 
-					console.log(error);
+					console.log(
+						'Something went wrong listening on interaction create'
+					);
 				}
 			}
 		});
@@ -218,8 +240,7 @@ export default class BotWithCommands {
 			);
 		} catch (error) {
 			if (error instanceof Error) {
-				console.log(error.message);
-				console.warn(`WARN: ${this.name} commands directory not found`);
+				console.log(error);
 			}
 
 			return;

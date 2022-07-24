@@ -2,11 +2,25 @@
 import { SlashCommandBuilder } from '@discordjs/builders';
 import { CommandInteraction } from 'discord.js';
 
-export default class BotCommandBuilder {
-	readonly slash: SlashCommandBuilder;
+export interface BotCommandBuilderOptions {
+	deferReply?: boolean;
+	ephemeral?: boolean;
+}
 
-	constructor() {
+export default class BotCommandBuilder {
+	/**
+	 * Slash command builder
+	 */
+	public readonly slash: SlashCommandBuilder;
+
+	public readonly deferReply?: boolean;
+
+	public readonly ephemeral?: boolean;
+
+	constructor(options?: BotCommandBuilderOptions) {
 		this.slash = new SlashCommandBuilder();
+		this.deferReply = options?.deferReply;
+		this.ephemeral = options?.ephemeral;
 	}
 
 	async execute(interaction: CommandInteraction) {}

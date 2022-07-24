@@ -1,12 +1,17 @@
 import BotWithCommands from '../../core/BotWithCommands.js';
 import Frenny from '../../core/Frenny.js';
 import dirResolver from '../../helpers/dirResolver.js';
-import { Client } from 'discord.js';
+import { Client, IntentsBitField } from 'discord.js';
 
 export default class FrennyAutomateBot extends BotWithCommands {
 	constructor() {
 		super({
-			client: new Client({ intents: [] }),
+			client: new Client({
+				intents: [
+					IntentsBitField.Flags.Guilds,
+					IntentsBitField.Flags.GuildMembers,
+				],
+			}),
 			commandsDir: dirResolver(import.meta.url, 'commands'),
 			eventsDir: dirResolver(import.meta.url, 'events'),
 			token: process.env.DISCORD_FRENNY_AUTOMATE_BOT_TOKEN,
@@ -14,10 +19,6 @@ export default class FrennyAutomateBot extends BotWithCommands {
 		});
 
 		this.name = FrennyAutomateBot.name;
-	}
-
-	private events() {
-		console.log('events');
 	}
 }
 
@@ -34,7 +35,6 @@ export function isFrennyAutomateBot(
 
 /**
  * Get instance of FrennyAutomateBot from Frenny bots collection
- * @param frenny Frenny
  * @returns instance of FrennyAutomateBot
  */
 export function getFrennyAutomateBotInstance(): FrennyAutomateBot {

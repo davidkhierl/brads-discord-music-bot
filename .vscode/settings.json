@@ -7,6 +7,13 @@
 		"source.fixAll.format": true
 	},
 	"typescript.tsdk": "node_modules\\typescript\\lib",
+	"debug.javascript.terminalOptions": {
+		"skipFiles": ["<node_internals>/**"]
+	},
+	"debug.javascript.autoAttachSmartPattern": [
+		"!**/node_modules/**",
+		"**/$KNOWN_TOOLS$/**"
+	],
 	"cSpell.words": [
 		"discordjs",
 		"Frennies",

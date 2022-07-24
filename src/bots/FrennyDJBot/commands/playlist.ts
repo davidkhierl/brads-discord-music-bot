@@ -31,6 +31,7 @@ export default class playlist extends BotCommandBuilder {
 			ephemeral: true,
 		});
 
+		// TODO: convert to try catch
 		await music.queue
 			.playlist(interaction.options.getString('url', true))
 			.catch((error) => {

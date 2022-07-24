@@ -1,3 +1,5 @@
+import { PrismaClient } from '@prisma/client';
+
 export {};
 
 declare global {
@@ -20,4 +22,6 @@ declare global {
 			__rootdir__: string;
 		}
 	}
+	// eslint-disable-next-line no-var
+	var prisma: PrismaClient;
 }
