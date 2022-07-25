@@ -15,8 +15,17 @@ export default class Frenny {
 	public static bots = new Collection<string, BotWithCommands>();
 
 	private constructor(...bots: BotWithCommands[]) {
+		Frenny.setBotsCollection(bots);
+	}
+
+	/**
+	 * Start all bots
+	 */
+	public start() {
 		log(chalk.bgBlue.bold.white(' Starting Frenny Bots '));
-		this.setBotsCollection(bots);
+		Frenny.bots.forEach((bot) => {
+			bot.start();
+		});
 	}
 
 	/**
@@ -35,7 +44,7 @@ export default class Frenny {
 	 * Set bot collection
 	 * @param bots BotWithCommands[]
 	 */
-	private setBotsCollection(bots: BotWithCommands[]) {
+	static setBotsCollection(bots: BotWithCommands[]) {
 		for (const bot of bots) {
 			if (bot.name) {
 				Frenny.bots.set(bot.name, bot);

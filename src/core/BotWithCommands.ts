@@ -52,6 +52,11 @@ export default class BotWithCommands {
 	private readonly appId: string;
 
 	/**
+	 * Bot token
+	 */
+	private readonly token: string;
+
+	/**
 	 * Bot commands collection
 	 */
 	private readonly commands: Collection<string, BotCommandBuilder>;
@@ -86,12 +91,20 @@ export default class BotWithCommands {
 
 		this.rest = new REST({ version: '10' }).setToken(props.token);
 
-		this.client.login(props.token);
+		this.token = props.token;
+	}
+
+	/**
+	 * Start the bot
+	 */
+	public start() {
+		this.client.login(this.token);
 
 		this.initializeEvents();
 
 		this.listenOnCommandChatInput();
 	}
+
 	/**
 	 * Listen to all command interaction
 	 */

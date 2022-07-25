@@ -8,7 +8,7 @@ import '@sentry/tracing';
 
 export const frenny = Frenny.create(new FrennyAutomateBot(), new FrennyDJBot());
 
-// Frenny.deployCommands();
+frenny.start();
 
 /**
  * Initialize Sentry
