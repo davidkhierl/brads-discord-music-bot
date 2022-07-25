@@ -1,8 +1,9 @@
-import { BotEventGuild } from '../../../core/BotWithCommands.js';
+import { BotEvent } from '../../../core/BotWithCommands.js';
 import saveNewGuild from '../../../services/saveNewGuild.js';
 import { getFrennyDJBotInstance } from '../FrennyDJBot.js';
+import { Guild } from 'discord.js';
 
-const guildCreate: BotEventGuild = {
+const guildCreate: BotEvent<Guild> = {
 	name: 'guildCreate',
 	execute: async (guild) => {
 		try {

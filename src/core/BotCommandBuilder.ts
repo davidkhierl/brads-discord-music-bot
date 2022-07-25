@@ -1,6 +1,6 @@
 /* eslint-disable no-empty-function */
 import { SlashCommandBuilder } from '@discordjs/builders';
-import { CommandInteraction } from 'discord.js';
+import { ChatInputCommandInteraction } from 'discord.js';
 
 export interface BotCommandBuilderOptions {
 	deferReply?: boolean;
@@ -23,5 +23,5 @@ export default class BotCommandBuilder {
 		this.ephemeral = options?.ephemeral;
 	}
 
-	async execute(interaction: CommandInteraction) {}
+	async execute(interaction: ChatInputCommandInteraction) {}
 }

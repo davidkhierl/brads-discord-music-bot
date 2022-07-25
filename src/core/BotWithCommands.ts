@@ -5,23 +5,26 @@ import UserCommandError from './UserCommandError.js';
 import { REST } from '@discordjs/rest';
 import * as Sentry from '@sentry/node';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
-import { Client, ClientEvents, Collection, Guild, Routes } from 'discord.js';
+import {
+	ChatInputCommandInteraction,
+	Client,
+	ClientEvents,
+	Collection,
+	Guild,
+	Routes,
+} from 'discord.js';
 import fs from 'fs';
 import path from 'path';
 import { pathToFileURL } from 'url';
 
-interface BotEventModule {
+export interface BotEventModule {
 	name: keyof ClientEvents;
 	once?: boolean;
 	execute: (...args: any[]) => Promise<void>;
 }
 
-export interface BotEventClient extends BotEventModule {
-	execute: (client: Client<true>) => Promise<void>;
-}
-
-export interface BotEventGuild extends BotEventModule {
-	execute: (client: Guild) => Promise<void>;
+export interface BotEvent<T> extends BotEventModule {
+	execute: (args: T) => Promise<void>;
 }
 
 export interface BotWithCommandsConstructor {
@@ -68,12 +71,6 @@ export default class BotWithCommands {
 	 */
 	private readonly rest: REST;
 
-	/**
-	 * Default error reply message
-	 */
-	private readonly defaultErrorReply: string =
-		'Sorry there was an error executing this command';
-
 	constructor(props: BotWithCommandsConstructor) {
 		this.client = props.client;
 
@@ -91,16 +88,89 @@ export default class BotWithCommands {
 
 		this.client.login(props.token);
 
-		this.loadEvents();
+		this.initializeEvents();
 
-		this.listenOnInteractionsCreate();
+		this.listenOnCommandChatInput();
+	}
+	/**
+	 * Listen to all command interaction
+	 */
+	private listenOnCommandChatInput() {
+		this.client.on('interactionCreate', async (interaction) => {
+			if (!interaction.isChatInputCommand()) return;
+
+			const command = this.commands.get(interaction.commandName);
+
+			if (!command) return;
+
+			try {
+				// TODO: Convert SentryHelper to be used as decorator
+				const transaction = SentryHelper.startCommandInteractionCreate(
+					interaction,
+					this.client
+				);
+
+				if (command.deferReply)
+					await interaction.deferReply({
+						ephemeral: command.ephemeral,
+					});
+
+				await command.execute(interaction);
+
+				transaction.finish();
+			} catch (error) {
+				if (error instanceof UserCommandError) {
+					this.replyErrorMessage(interaction, {
+						deferReply: command.deferReply,
+						message: error.message,
+					});
+				}
+
+				if (error instanceof Error) {
+					Sentry.captureException(error);
+
+					this.replyErrorMessage(interaction, {
+						deferReply: command.deferReply,
+					});
+
+					console.log(error);
+
+					return;
+				}
+			}
+		});
+	}
+
+	/**
+	 * Reply error message to user
+	 * @param interaction ChatInputCommandInteraction
+	 * @param options Reply options
+	 */
+	private async replyErrorMessage(
+		interaction: ChatInputCommandInteraction,
+		options?: { message?: string; deferReply?: boolean }
+	) {
+		const errorMessage =
+			options?.message ??
+			'Sorry there was an error executing this command';
+
+		if (options?.deferReply)
+			await interaction.followUp({
+				ephemeral: true,
+				content: errorMessage,
+			});
+		else
+			await interaction.reply({
+				ephemeral: true,
+				content: errorMessage,
+			});
 	}
 
 	/**
 	 * Load all events from bot events directory
 	 * @returns void
 	 */
-	private async loadEvents() {
+	private async initializeEvents() {
 		if (!this.eventsDir) return;
 
 		try {
@@ -108,7 +178,7 @@ export default class BotWithCommands {
 				.readdirSync(this.eventsDir)
 				.filter((file) => file.match(/(\.[tj]s$)/g));
 
-			Promise.all<void>(
+			return Promise.all<void>(
 				eventFiles.map(
 					(file) =>
 						new Promise((resolve, reject) => {
@@ -138,84 +208,8 @@ export default class BotWithCommands {
 			);
 		} catch (error) {
 			if (error instanceof Error) console.error(error);
-		}
-	}
 
-	/**
-	 * Listen to all command interaction
-	 */
-	private listenOnInteractionsCreate() {
-		this.client.on('interactionCreate', async (interaction) => {
-			if (!interaction.isChatInputCommand()) return;
-
-			const command = this.commands.get(interaction.commandName);
-
-			if (!command) return;
-
-			try {
-				// TODO: Convert SentryHelper to be used as decorator
-				const transaction = SentryHelper.startCommandInteractionCreate(
-					interaction,
-					this.client
-				);
-
-				if (command.deferReply)
-					await interaction.deferReply({
-						ephemeral: command.ephemeral,
-					});
-
-				await command.execute(interaction);
-
-				transaction.finish();
-			} catch (error) {
-				if (error instanceof UserCommandError) {
-					if (command.deferReply)
-						await interaction.followUp({
-							ephemeral: true,
-							content: error.message,
-						});
-					else
-						await interaction.reply({
-							ephemeral: true,
-							content: error.message,
-						});
-					return;
-				}
-				if (error instanceof Error) {
-					Sentry.captureException(error);
-					if (command.deferReply)
-						await interaction.followUp({
-							ephemeral: true,
-							content: this.defaultErrorReply,
-						});
-					else
-						await interaction.reply({
-							ephemeral: true,
-							content: this.defaultErrorReply,
-						});
-					console.log(error);
-					return;
-				}
-			}
-
-			// else {
-			// 	// TODO: Decouple from sentry.
-			// 	Sentry.captureException(error);
-
-			// }
-		});
-	}
-
-	/**
-	 * Set commands collections
-	 */
-	private async setCommandsCollection() {
-		const commands = await this.getAllCommandsInstance();
-
-		if (commands) {
-			for (const command of commands) {
-				this.commands.set(command.slash.name, command);
-			}
+			return;
 		}
 	}
 
@@ -257,6 +251,19 @@ export default class BotWithCommands {
 			}
 
 			return;
+		}
+	}
+
+	/**
+	 * Set commands collections
+	 */
+	private async setCommandsCollection() {
+		const commands = await this.getAllCommandsInstance();
+
+		if (commands) {
+			for (const command of commands) {
+				this.commands.set(command.slash.name, command);
+			}
 		}
 	}
 
