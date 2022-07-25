@@ -21,11 +21,8 @@ async function saveNewGuild(guild: Guild) {
 	});
 
 	const rolesFromGuild = guild.roles.cache
-		.filter((role) => !role.managed)
-		.map((role) => ({
-			id: role.id,
-			name: role.name,
-		}));
+		.filter((role) => !role.managed && role.name !== '@everyone')
+		.toJSON();
 
 	for (const role of rolesFromGuild) {
 		await prisma.role.upsert({

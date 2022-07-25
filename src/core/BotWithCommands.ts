@@ -220,7 +220,7 @@ export default class BotWithCommands {
 				)
 			);
 		} catch (error) {
-			if (error instanceof Error) console.error(error);
+			console.log(error);
 
 			return;
 		}

@@ -9,19 +9,14 @@ interface BotEventRoleUpdate<T> extends BotEventModule {
 const onRoleUpdate: BotEventRoleUpdate<Role> = {
 	name: 'roleUpdate',
 	execute: async (_oldRole, newRole) => {
-		try {
-			console.log('Role Update', newRole.id, newRole.name);
-			if (newRole.managed) return;
+		if (newRole.managed) return;
 
-			await prisma.role.update({
-				data: {
-					name: newRole.name,
-				},
-				where: { id: newRole.id },
-			});
-		} catch (error) {
-			if (error instanceof Error) console.log(error);
-		}
+		await prisma.role.update({
+			data: {
+				name: newRole.name,
+			},
+			where: { id: newRole.id },
+		});
 	},
 };
 

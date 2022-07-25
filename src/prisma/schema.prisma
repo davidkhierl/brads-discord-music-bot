@@ -16,7 +16,7 @@ model Bot {
 model Guild {
   id             String  @id @map("_id") @db.String
   name           String
-  bot            Bot     @relation(fields: [botId], references: [id])
+  bot            Bot     @relation(fields: [botId], references: [id], onDelete: Cascade)
   roles          Role[]
   newMembersRole String? @db.String
   botId          String  @db.String
@@ -26,6 +26,6 @@ model Guild {
 model Role {
   id      String  @id @map("_id") @db.String
   name    String
-  guild   Guild?  @relation(fields: [guildId], references: [id])
+  guild   Guild?  @relation(fields: [guildId], references: [id], onDelete: Cascade)
   guildId String? @db.String
 }
