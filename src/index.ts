@@ -21,6 +21,6 @@ Sentry.init({
 	],
 });
 
-export const frenny = Frenny.create(new FrennyAutomateBot());
+export const frenny = Frenny.create(new FrennyAutomateBot(), new FrennyDJBot());
 
 frenny.start();
