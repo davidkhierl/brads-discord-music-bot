@@ -1,6 +1,6 @@
 {
 	"name": "frenny-discord-bots",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "Frenny Discord Bots 🤘",
 	"main": "build/index.js",
 	"repository": "https://github.com/davidkhierl/frenny-discord-bots",
