@@ -1,4 +1,3 @@
-import UserCommandError from '../../core/UserCommandError.js';
 import { Player, Queue } from 'discord-music-player';
 import {
 	CacheType,
@@ -7,6 +6,7 @@ import {
 	Guild,
 	GuildMember,
 } from 'discord.js';
+import { UserCommandError } from '../../core/BotWithCommands.js';
 
 /**
  * Music

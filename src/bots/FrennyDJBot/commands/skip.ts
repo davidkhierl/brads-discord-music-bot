@@ -1,8 +1,8 @@
 import BotCommandBuilder from '../../../core/BotCommandBuilder.js';
-import UserCommandError from '../../../core/UserCommandError.js';
 import FrennyDJBot from '../FrennyDJBot.js';
 import Music from '../Music.js';
 import { CommandInteraction } from 'discord.js';
+import { UserCommandError } from '../../../core/BotWithCommands.js';
 
 export default class skip extends BotCommandBuilder {
 	constructor() {
