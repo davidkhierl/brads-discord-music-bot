@@ -12,7 +12,7 @@
 	},
 	"type": "module",
 	"scripts": {
-		"build": "tsc",
+		"build": "tsc -p tsconfig.production.json",
 		"dev": "nodemon -r dotenv/config ./src/index.ts",
 		"start": "node -r dotenv/config build/index.js",
 		"deploy-commands": "ts-node -r dotenv/config src/deploy-commands.ts"
