@@ -97,9 +97,9 @@ export default class Frenny {
 					return;
 
 				case 'global':
-					if (process.env.NODE_ENV === 'production') {
+					if (process.env.NODE_ENV !== 'production') {
 						console.log(
-							'Deploying commands globally in development environtment is not allowed'
+							'Deploying commands globally in development environment is not allowed'
 						);
 						return;
 					}
