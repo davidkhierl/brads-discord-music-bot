@@ -15,7 +15,7 @@
 		"build": "tsc -p tsconfig.production.json",
 		"dev": "nodemon -r dotenv/config ./src/index.ts",
 		"start": "node -r dotenv/config build/index.js",
-		"deploy-commands": "ts-node -r dotenv/config src/deploy-commands.ts"
+		"deploy-commands": "node -r dotenv/config build/deploy-commands.js"
 	},
 	"dependencies": {
 		"@discordjs/builders": "^1.0.0",
