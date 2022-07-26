@@ -33,7 +33,6 @@ export default class play extends BotCommandBuilder {
 			ephemeral: true,
 		});
 
-		// TODO: convert to try catch
 		await music.queue
 			.play(interaction.options.getString('song', true))
 			.catch((error) => {

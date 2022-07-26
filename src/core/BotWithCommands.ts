@@ -1,7 +1,6 @@
 import SentryHelper from '../helpers/SentryHelper.js';
 import BotCommandBuilder from './BotCommandBuilder.js';
-import FrennyError from './FrennyError.js';
-import UserCommandError from './UserCommandError.js';
+import { FrennyError } from './Frenny.js';
 import { REST } from '@discordjs/rest';
 import * as Sentry from '@sentry/node';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
@@ -10,7 +9,6 @@ import {
 	Client,
 	ClientEvents,
 	Collection,
-	Guild,
 	Routes,
 } from 'discord.js';
 import fs from 'fs';
@@ -106,55 +104,6 @@ export default class BotWithCommands {
 	}
 
 	/**
-	 * Listen to all command interaction
-	 */
-	private listenOnCommandChatInput() {
-		this.client.on('interactionCreate', async (interaction) => {
-			if (!interaction.isChatInputCommand()) return;
-
-			const command = this.commands.get(interaction.commandName);
-
-			if (!command) return;
-
-			try {
-				// TODO: Convert SentryHelper to be used as decorator
-				const transaction = SentryHelper.startCommandInteractionCreate(
-					interaction,
-					this.client
-				);
-
-				if (command.deferReply)
-					await interaction.deferReply({
-						ephemeral: command.ephemeral,
-					});
-
-				await command.execute(interaction);
-
-				transaction.finish();
-			} catch (error) {
-				if (error instanceof UserCommandError) {
-					this.replyErrorMessage(interaction, {
-						deferReply: command.deferReply,
-						message: error.message,
-					});
-				}
-
-				if (error instanceof Error) {
-					Sentry.captureException(error);
-
-					this.replyErrorMessage(interaction, {
-						deferReply: command.deferReply,
-					});
-
-					console.log(error);
-
-					return;
-				}
-			}
-		});
-	}
-
-	/**
 	 * Reply error message to user
 	 * @param interaction ChatInputCommandInteraction
 	 * @param options Reply options
@@ -186,44 +135,102 @@ export default class BotWithCommands {
 	private async initializeEvents() {
 		if (!this.eventsDir) return;
 
-		try {
-			const eventFiles = fs
-				.readdirSync(this.eventsDir)
-				.filter((file) => file.match(/(\.[tj]s$)/g));
+		// read event files
+		const eventFiles = fs
+			.readdirSync(this.eventsDir)
+			.filter((file) => file.match(/(\.[tj]s$)/g));
 
-			return Promise.all<void>(
-				eventFiles.map(
-					(file) =>
-						new Promise((resolve, reject) => {
-							(
-								import(
-									pathToFileURL(
-										path.join(this.eventsDir!, file)
-									).href
-								) as Promise<{ default: BotEventModule }>
-							)
-								.then(({ default: event }) => {
-									if (event.once) {
-										this.client.once(
-											event.name,
-											(...args) => event.execute(...args)
-										);
-									} else {
-										this.client.on(event.name, (...args) =>
-											event.execute(...args)
-										);
-									}
-									resolve();
-								})
-								.catch((reason) => reject(reason));
-						})
-				)
-			);
-		} catch (error) {
-			console.log(error);
+		return Promise.all<void>(
+			eventFiles.map(
+				(file) =>
+					new Promise((resolve, reject) => {
+						(
+							import(
+								pathToFileURL(path.join(this.eventsDir!, file))
+									.href
+							) as Promise<{ default: BotEventModule }>
+						)
+							.then(({ default: event }) => {
+								// execute events
+								if (event.once) {
+									this.client.once(event.name, (...args) =>
+										event
+											.execute(...args)
+											.catch((error) => {
+												Sentry.captureException(error);
+												console.log(error);
+											})
+									);
+								} else {
+									this.client.on(event.name, (...args) =>
+										event
+											.execute(...args)
+											.catch((error) => {
+												Sentry.captureException(error);
+												console.log(error);
+											})
+									);
+								}
+								resolve();
+							})
+							.catch((reason) => reject(reason));
+					})
+			)
+		);
+	}
 
-			return;
-		}
+	/**
+	 * Listen to all command interaction
+	 */
+	private listenOnCommandChatInput() {
+		this.client.on('interactionCreate', async (interaction) => {
+			if (!interaction.isChatInputCommand()) return;
+
+			// retrieve command
+			const command = this.commands.get(interaction.commandName);
+
+			if (!command) return;
+
+			try {
+				// start sentry transaction
+				const transaction = SentryHelper.startCommandInteractionCreate(
+					interaction,
+					this.client
+				);
+
+				// defer reply
+				if (command.deferReply)
+					await interaction.deferReply({
+						ephemeral: command.ephemeral,
+					});
+
+				// execute command
+				await command.execute(interaction);
+
+				// finish sentry transaction
+				transaction.finish();
+			} catch (error) {
+				// reply to user if its an user command error
+				if (error instanceof UserCommandError) {
+					this.replyErrorMessage(interaction, {
+						deferReply: command.deferReply,
+						message: error.message,
+					});
+				}
+
+				if (error instanceof Error) {
+					// reply a generic error message to user
+					this.replyErrorMessage(interaction, {
+						deferReply: command.deferReply,
+					});
+
+					// capture sentry error
+					Sentry.captureException(error);
+
+					console.log(error);
+				}
+			}
+		});
 	}
 
 	/**
@@ -324,3 +331,18 @@ export default class BotWithCommands {
 		});
 	}
 }
+
+/**
+ * BotWithCommands error
+ */
+export class BotWithCommandsError extends Error {}
+
+/**
+ * Error caused by user initiating commands
+ */
+export class UserCommandError extends Error {}
+
+/**
+ * Error related to a bot event
+ */
+export class BotEventError extends Error {}

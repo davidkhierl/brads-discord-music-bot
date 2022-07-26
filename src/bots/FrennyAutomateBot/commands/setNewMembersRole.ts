@@ -1,5 +1,5 @@
 import BotCommandBuilder from '../../../core/BotCommandBuilder.js';
-import UserCommandError from '../../../core/UserCommandError.js';
+import { UserCommandError } from '../../../core/BotWithCommands.js';
 import prisma from '../../../lib/prisma.js';
 import getGuildNewMembersRole from '../../../services/getGuildNewMembersRole.js';
 import updateGuildNewMembersRole from '../../../services/updateGuildNewMembersRole.js';
@@ -34,6 +34,7 @@ export default class setNewMembersRole extends BotCommandBuilder {
 				'Found 0 roles, make sure to add new roles'
 			);
 
+		// select menu component
 		const selectMenuRow =
 			new ActionRowBuilder<SelectMenuBuilder>().addComponents(
 				new SelectMenuBuilder()
@@ -49,6 +50,7 @@ export default class setNewMembersRole extends BotCommandBuilder {
 					.setMaxValues(1)
 			);
 
+		// button component
 		const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
 			new ButtonBuilder()
 				.setCustomId('newMembersRoleApplyToExistingMembersAccept')
@@ -60,29 +62,42 @@ export default class setNewMembersRole extends BotCommandBuilder {
 				.setStyle(ButtonStyle.Primary)
 		);
 
+		// display the selectmenu
 		await interaction.followUp({
 			content:
 				'Select the role to be applied when users join your server',
 			components: [selectMenuRow],
 		});
 
+		// select menu collector
 		const selectMenuCollector =
 			interaction.channel?.createMessageComponentCollector({
 				componentType: ComponentType.SelectMenu,
 				time: 60000,
 			});
 
+		// listen on select menu event
 		selectMenuCollector?.on('collect', async (selectMenuInteraction) => {
 			try {
 				await selectMenuInteraction.deferUpdate();
 
-				if (!selectMenuInteraction.guildId)
-					throw new Error('guildId is null');
+				if (!selectMenuInteraction.guildId) {
+					selectMenuInteraction.editReply({
+						content:
+							'Something went wrong while executing this command',
+						components: [],
+					});
+
+					selectMenuCollector.stop();
+
+					return;
+				}
 
 				await updateGuildNewMembersRole(
 					selectMenuInteraction.values[0],
 					selectMenuInteraction.guildId
 				);
+
 				await selectMenuInteraction.editReply({
 					content:
 						'New members role updated! do you want to apply this to all existing members?',

@@ -125,3 +125,8 @@ export default class Frenny {
 		}
 	}
 }
+
+/**
+ * FrennyError
+ */
+export class FrennyError extends Error {}

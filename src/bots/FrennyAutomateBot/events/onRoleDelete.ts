@@ -1,18 +1,14 @@
 import { BotEvent } from '../../../core/BotWithCommands.js';
-import prisma from '../../../lib/prisma.js';
+import deleteRole from '../../../services/deleteRole.js';
 import { Role } from 'discord.js';
 
+/**
+ * Delete guild role on role delete
+ */
 const onRoleDelete: BotEvent<Role> = {
 	name: 'roleDelete',
 	execute: async (role) => {
-		try {
-			console.log('Role Delete', role.id, role.name);
-			if (role.managed) return;
-
-			await prisma.role.delete({ where: { id: role.id } });
-		} catch (error) {
-			if (error instanceof Error) console.log(error);
-		}
+		await deleteRole(role.id);
 	},
 };
 

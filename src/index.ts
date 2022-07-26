@@ -6,10 +6,6 @@ import { RewriteFrames } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
 import '@sentry/tracing';
 
-export const frenny = Frenny.create(new FrennyAutomateBot());
-
-frenny.start();
-
 /**
  * Initialize Sentry
  */
@@ -24,3 +20,7 @@ Sentry.init({
 		}),
 	],
 });
+
+export const frenny = Frenny.create(new FrennyAutomateBot());
+
+frenny.start();
