@@ -1,10 +1,11 @@
-import BotCommands from '../../../lib/BotCommands';
-import Music from '../Music';
+import BotCommandBuilder from '../../../core/BotCommandBuilder.js';
+import FrennyDJBot from '../FrennyDJBot.js';
+import Music from '../Music.js';
 import { CommandInteraction } from 'discord.js';
 
-export default class play extends BotCommands {
+export default class play extends BotCommandBuilder {
 	constructor() {
-		super();
+		super({ deferReply: true, ephemeral: true });
 		this.slash
 			.setName('play')
 			.setDescription('Play a song from YouTube')
@@ -19,9 +20,9 @@ export default class play extends BotCommands {
 	}
 
 	async execute(interaction: CommandInteraction): Promise<void> {
-		if (!interaction.isCommand()) return;
+		if (!interaction.isChatInputCommand()) return;
 
-		const music = new Music(interaction);
+		const music = new Music(interaction, FrennyDJBot.player);
 
 		await music.joinVoiceChannel();
 

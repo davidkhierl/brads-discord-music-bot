@@ -1,11 +1,12 @@
-import BotCommands from '../../../lib/BotCommands';
-import UserCommandError from '../../../utils/UserCommandError';
-import Music from '../Music';
+import BotCommandBuilder from '../../../core/BotCommandBuilder.js';
+import FrennyDJBot from '../FrennyDJBot.js';
+import Music from '../Music.js';
 import { CommandInteraction } from 'discord.js';
+import { UserCommandError } from '../../../core/BotWithCommands.js';
 
-export default class queue extends BotCommands {
+export default class queue extends BotCommandBuilder {
 	constructor() {
-		super();
+		super({ deferReply: true, ephemeral: true });
 		this.slash
 			.setName('queue')
 			.setDescription('Display songs in queue')
@@ -15,9 +16,9 @@ export default class queue extends BotCommands {
 	}
 
 	async execute(interaction: CommandInteraction): Promise<void> {
-		if (!interaction.isCommand()) return;
+		if (!interaction.isChatInputCommand()) return;
 
-		const music = new Music(interaction);
+		const music = new Music(interaction, FrennyDJBot.player);
 
 		if (!music.guildQueue || !music.guildQueue.isPlaying)
 			throw new UserCommandError(
