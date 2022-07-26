@@ -1,2 +1,2 @@
-release: pnpm run deploy-commands
+release: yarn run deploy-commands
 worker: yarn start
