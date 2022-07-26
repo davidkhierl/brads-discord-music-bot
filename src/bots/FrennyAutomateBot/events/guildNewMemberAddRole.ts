@@ -11,6 +11,8 @@ const guildNewMemberAddRole: BotEvent<GuildMember> = {
 		if (!guildMember.guild.available)
 			throw new BotEventError('Guild not available');
 
+		if (guildMember.user.bot) return;
+
 		const newMembersRole = await getGuildNewMembersRole(
 			guildMember.guild.id
 		);
