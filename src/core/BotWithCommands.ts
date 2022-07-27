@@ -11,9 +11,9 @@ import {
 	Collection,
 	Routes,
 } from 'discord.js';
-import fs from 'fs';
-import path from 'path';
-import { pathToFileURL } from 'url';
+import fs from 'node:fs';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 export interface BotEventModule {
 	name: keyof ClientEvents;

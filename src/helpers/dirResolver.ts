@@ -1,5 +1,5 @@
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 function dirResolver(path: string, ...paths: string[]): string {
 	const fileName = fileURLToPath(path);
