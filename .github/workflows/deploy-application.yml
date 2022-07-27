@@ -23,12 +23,12 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - name: Setup Node 18
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '18'
-      - name: Building project
+      - name: Install dependencies
         run: yarn install
+      - name: Build project
         run: yarn build
       # - name: Creating sentry release
       #   uses: getsentry/action-release@v1
