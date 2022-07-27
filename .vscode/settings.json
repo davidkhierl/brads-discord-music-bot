@@ -15,11 +15,13 @@
 		"**/$KNOWN_TOOLS$/**"
 	],
 	"cSpell.words": [
+		"copyfiles",
 		"discordjs",
 		"Frennies",
 		"frenny",
 		"mdtable",
 		"rootdir",
+		"trivago",
 		"Undeafen",
 		"undeafened",
 		"undefeanded",
