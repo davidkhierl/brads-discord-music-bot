@@ -1,5 +1,8 @@
-name: GitHub Actions Demo
-on: [push]
+name: Deploying Application
+on:
+  push:
+    branches:
+      - main
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
@@ -14,4 +17,20 @@ jobs:
       - name: List files in the repository
         run: |
           ls ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+  Create-Sentry-Release:
+    needs: Explore-GitHub-Actions
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Creating sentry release
+        uses: getsentry/action-release@v1
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+          # SENTRY_URL: https://sentry.io/
+        with:
+          environment: production
+          sourcemaps: "./build"
       - run: echo "🍏 This job's status is ${{ job.status }}."
