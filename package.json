@@ -2,7 +2,7 @@
 	"name": "frenny-discord-bots",
 	"version": "0.1.0",
 	"description": "Frenny Discord Bots 🤘",
-	"main": "build/index.js",
+	"main": "build/src/index.js",
 	"repository": "https://github.com/davidkhierl/frenny-discord-bots",
 	"author": "David Khierl <hi@davidkhierkhierl.com>",
 	"private": "true",
@@ -14,7 +14,7 @@
 	"scripts": {
 		"build": "tsc -p tsconfig.production.json && copyfiles ./sentry-release-name.txt ./build/",
 		"dev": "yarn gen-sentry-release-name && nodemon -r dotenv/config ./src/index.ts",
-		"start": "node -r dotenv/config build/index.js",
+		"start": "node -r dotenv/config build/src/index.js",
 		"postinstall": "yarn gen-sentry-release-name",
 		"deploy-commands": "node -r dotenv/config build/src/deploy-commands.js",
 		"gen-sentry-release-name": "sentry-cli releases propose-version --silent > sentry-release-name.txt"
