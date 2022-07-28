@@ -30,4 +30,5 @@ jobs:
         with:
           environment: production
           sourcemaps: "./build"
+          url_prefix: "~"
       - run: echo "Sentry release ${{ job.status }}."
