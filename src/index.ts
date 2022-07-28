@@ -23,7 +23,7 @@ Sentry.init({
 	tracesSampleRate: 1.0,
 	integrations: [
 		new RewriteFrames({
-			root: __rootdir__ ?? process.cwd(),
+			root: process.cwd(),
 		}),
 	],
 });
