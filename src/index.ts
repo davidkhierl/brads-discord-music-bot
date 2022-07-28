@@ -4,7 +4,7 @@ import Frenny from './core/Frenny.js';
 import prisma from './lib/prisma.js';
 import { __rootdir__ } from './root.js';
 import getSentryReleaseName from './utils/getSentryReleaseName.js';
-import { RewriteFrames } from '@sentry/integrations';
+import { RewriteFrames, Transaction } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
 import * as Tracing from '@sentry/tracing';
 
@@ -28,6 +28,8 @@ Sentry.init({
 			prefix: 'src/',
 		}),
 		new Tracing.Integrations.Prisma({ client: prisma }),
+		new Transaction(),
+		new Sentry.Integrations.Modules(),
 	],
 });
 
