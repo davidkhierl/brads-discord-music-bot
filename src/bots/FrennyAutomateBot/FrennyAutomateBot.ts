@@ -1,6 +1,6 @@
 import BotWithCommands from '../../core/BotWithCommands.js';
 import Frenny from '../../core/Frenny.js';
-import dirResolver from '../../helpers/dirResolver.js';
+import dirResolver from '../../utils/dirResolver.js';
 import { Client, IntentsBitField } from 'discord.js';
 
 export default class FrennyAutomateBot extends BotWithCommands {

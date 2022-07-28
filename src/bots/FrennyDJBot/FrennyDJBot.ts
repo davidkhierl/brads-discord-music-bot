@@ -1,6 +1,6 @@
 import BotWithCommands from '../../core/BotWithCommands.js';
 import Frenny from '../../core/Frenny.js';
-import dirResolver from '../../helpers/dirResolver.js';
+import dirResolver from '../../utils/dirResolver.js';
 import { Player } from 'discord-music-player';
 import { Client, IntentsBitField, TextChannel } from 'discord.js';
 

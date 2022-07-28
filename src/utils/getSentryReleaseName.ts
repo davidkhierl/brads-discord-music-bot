@@ -1,4 +1,4 @@
-import dirResolver from '../helpers/dirResolver.js';
+import dirResolver from './dirResolver.js';
 import { readFile } from 'node:fs/promises';
 
 /**
