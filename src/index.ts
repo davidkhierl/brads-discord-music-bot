@@ -5,11 +5,15 @@ import getSentryReleaseName from './utils/getSentryReleaseName.js';
 import { RewriteFrames } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
 import '@sentry/tracing';
+import { __rootdir__ } from 'src/root.js';
 
 /**
  * Initialize Sentry
  */
 const releaseName = await getSentryReleaseName();
+
+console.log(__rootdir__);
+console.log(process.cwd());
 
 Sentry.init({
 	environment: process.env.NODE_ENV ?? 'development',

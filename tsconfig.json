@@ -33,7 +33,6 @@
 		"files": true,
 		"esm": true
 	},
-	"files": ["src/index.ts", "src/typings/global.d.ts"],
 	"exclude": ["node_modules", "build"],
 	"include": ["src/**/*"]
 }
