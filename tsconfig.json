@@ -3,7 +3,6 @@
 		"target": "ESNext",
 		"module": "NodeNext",
 		"lib": ["ESNext"],
-		"rootDir": ".",
 		"outDir": "build",
 		"allowJs": true,
 		"removeComments": true,
@@ -30,8 +29,7 @@
 	},
 	"ts-node": {
 		"files": true,
-		"esm": true,
-		"require": ["tsconfig-paths/register"]
+		"esm": true
 	},
 	"exclude": ["node_modules", "build"],
 	"include": ["src/**/*"]

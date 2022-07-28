@@ -12,8 +12,9 @@ import '@sentry/tracing';
  */
 const releaseName = await getSentryReleaseName();
 
-console.log(__rootdir__);
-console.log(process.cwd());
+console.log('Initializing Sentry');
+
+console.log('[Sentry Release]:', releaseName);
 
 Sentry.init({
 	environment: process.env.NODE_ENV ?? 'development',

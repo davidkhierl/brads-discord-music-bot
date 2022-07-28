@@ -19,7 +19,7 @@ jobs:
         run: yarn build
       - name: List build files
         run: |
-          ls ${{ github.workspace }}/build
+          ls -R ${{ github.workspace }}/build
       - name: Creating sentry release
         uses: getsentry/action-release@v1
         env:
