@@ -16,7 +16,7 @@
 		"dev": "yarn gen-sentry-release-name && nodemon -r dotenv/config ./src/index.ts",
 		"start": "node -r dotenv/config build/index.js",
 		"postinstall": "yarn gen-sentry-release-name",
-		"deploy-commands": "node -r dotenv/config build/deploy-commands.js",
+		"deploy-commands": "node -r dotenv/config build/src/deploy-commands.js",
 		"gen-sentry-release-name": "sentry-cli releases propose-version --silent > sentry-release-name.txt"
 	},
 	"dependencies": {
