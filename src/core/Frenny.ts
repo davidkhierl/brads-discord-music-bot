@@ -83,7 +83,7 @@ export default class Frenny {
 							)
 								.then(() => {
 									log(
-										chalk.green('[Deployed]:'),
+										chalk.green('[Deployed Commands]:'),
 										chalk.blue(bot.name)
 									);
 								})
@@ -109,7 +109,7 @@ export default class Frenny {
 					Frenny.bots.forEach((bot) => {
 						bot.deployCommandsGlobally().then(() => {
 							log(
-								chalk.green('[Deployed]:'),
+								chalk.green('[Deployed Commands]:'),
 								chalk.blue(bot.name)
 							);
 						});
