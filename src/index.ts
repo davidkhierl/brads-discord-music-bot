@@ -24,6 +24,7 @@ Sentry.init({
 	integrations: [
 		new RewriteFrames({
 			root: process.cwd(),
+			prefix: 'src/',
 		}),
 	],
 });
