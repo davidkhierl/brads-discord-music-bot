@@ -2,8 +2,9 @@
 	"compilerOptions": {
 		"target": "ESNext",
 		"module": "NodeNext",
-		"lib": ["ESNext", "DOM"],
-		"outDir": "./build",
+		"lib": ["ESNext"],
+		"rootDir": ".",
+		"outDir": "build",
 		"allowJs": true,
 		"removeComments": true,
 		"isolatedModules": false,
@@ -25,8 +26,7 @@
 		"forceConsistentCasingInFileNames": true,
 		"useUnknownInCatchVariables": false,
 		"noEmitHelpers": true,
-		"importHelpers": true,
-		"sourceMap": true
+		"importHelpers": true
 	},
 	"ts-node": {
 		"files": true,
