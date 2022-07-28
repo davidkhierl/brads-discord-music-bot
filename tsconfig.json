@@ -3,6 +3,7 @@
 		"target": "ESNext",
 		"module": "NodeNext",
 		"lib": ["ESNext", "DOM"],
+		"baseUrl": ".",
 		"outDir": "./build",
 		"allowJs": true,
 		"removeComments": true,
