@@ -21,18 +21,25 @@ const onRoleDelete: BotEvent<Role> = {
 		});
 
 		Sentry.setContext('role', {
-			name: role.name,
 			id: role.id,
+			name: role.name,
+			managed: role.managed,
 		});
 
 		Sentry.setContext('guild', {
-			name: role.guild.name,
 			id: role.guild.id,
+			name: role.guild.name,
 		});
 
 		try {
+			// ignore managed role
+			if (role.managed) return;
+
+			// delete role on database
 			await deleteRole(role.id);
 		} catch (error) {
+			if (error instanceof Error) console.log(error.message);
+
 			Sentry.captureException(error);
 		}
 
