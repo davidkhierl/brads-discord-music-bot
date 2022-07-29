@@ -1,6 +1,7 @@
 import { BotEventModule } from '../../../core/BotWithCommands.js';
-import prisma from '../../../lib/prisma.js';
+import SentryHelper from '../../../helpers/SentryHelper.js';
 import updateGuildRole from '../../../services/updateGuildRole.js';
+import * as Sentry from '@sentry/node';
 import { Role } from 'discord.js';
 
 interface BotEventRoleUpdate<T> extends BotEventModule {
@@ -13,9 +14,40 @@ interface BotEventRoleUpdate<T> extends BotEventModule {
 const onRoleUpdate: BotEventRoleUpdate<Role> = {
 	name: 'roleUpdate',
 	execute: async (_oldRole, newRole) => {
-		if (newRole.managed) return;
+		const transaction = SentryHelper.startBotEventTransaction({
+			op: 'roleUpdate',
+		});
 
-		await updateGuildRole(newRole);
+		Sentry.setContext('role', {
+			id: newRole.id,
+			name: newRole.name,
+			managed: newRole.managed,
+		});
+
+		Sentry.setContext('guild', {
+			id: newRole.guild.id,
+			name: newRole.guild.name,
+		});
+
+		try {
+			// ignore managed role
+			if (newRole.managed) {
+				transaction.setStatus('cancelled');
+				transaction.finish();
+				return;
+			}
+			await updateGuildRole(newRole);
+
+			transaction.setStatus('ok');
+		} catch (error) {
+			if (error instanceof Error) console.log(error.message);
+
+			transaction.setStatus('internal_error');
+
+			Sentry.captureException(error);
+		}
+
+		transaction.finish();
 	},
 };
 

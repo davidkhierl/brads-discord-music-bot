@@ -154,11 +154,25 @@ export default class BotWithCommands {
 								// execute events
 								if (event.once) {
 									this.client.once(event.name, (...args) =>
-										event.execute(...args)
+										event
+											.execute(...args)
+											.catch((error) => {
+												if (error instanceof Error)
+													console.log(error.message);
+
+												Sentry.captureException(error);
+											})
 									);
 								} else {
 									this.client.on(event.name, (...args) =>
-										event.execute(...args)
+										event
+											.execute(...args)
+											.catch((error) => {
+												if (error instanceof Error)
+													console.log(error.message);
+
+												Sentry.captureException(error);
+											})
 									);
 								}
 								resolve();

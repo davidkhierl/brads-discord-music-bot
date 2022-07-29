@@ -1,5 +1,6 @@
 import { BotEvent, BotEventError } from '../../../core/BotWithCommands.js';
 import getGuildNewMembersRole from '../../../services/getGuildNewMembersRole.js';
+import * as Sentry from '@sentry/node';
 import { GuildMember } from 'discord.js';
 
 /**
@@ -8,18 +9,26 @@ import { GuildMember } from 'discord.js';
 const guildNewMemberAddRole: BotEvent<GuildMember> = {
 	name: 'guildMemberAdd',
 	execute: async (guildMember) => {
-		if (!guildMember.guild.available)
-			throw new BotEventError('Guild not available');
+		// ? Still not sure if sentry transaction is necessary here.
 
-		if (guildMember.user.bot) return;
+		try {
+			if (!guildMember.guild.available)
+				throw new BotEventError('Guild not available');
 
-		const newMembersRole = await getGuildNewMembersRole(
-			guildMember.guild.id
-		);
+			if (guildMember.user.bot) return;
 
-		if (!newMembersRole) return;
+			const newMembersRole = await getGuildNewMembersRole(
+				guildMember.guild.id
+			);
 
-		await guildMember.roles.add(newMembersRole);
+			if (!newMembersRole) return;
+
+			await guildMember.roles.add(newMembersRole);
+		} catch (error) {
+			if (error instanceof Error) console.log(error.message);
+
+			Sentry.captureException(error);
+		}
 	},
 };
 

@@ -1,6 +1,7 @@
 import { BotEvent } from '../../../core/BotWithCommands.js';
-import prisma from '../../../lib/prisma.js';
+import SentryHelper from '../../../helpers/SentryHelper.js';
 import saveGuildRole from '../../../services/saveGuildRole.js';
+import * as Sentry from '@sentry/node';
 import { Role } from 'discord.js';
 
 /**
@@ -10,9 +11,41 @@ import { Role } from 'discord.js';
 const onRoleCreate: BotEvent<Role> = {
 	name: 'roleCreate',
 	execute: async (role) => {
-		if (role.managed) return;
+		const transaction = SentryHelper.startBotEventTransaction({
+			op: 'roleCreate',
+		});
 
-		await saveGuildRole(role);
+		Sentry.setContext('role', {
+			id: role.id,
+			name: role.name,
+			managed: role.managed,
+		});
+
+		Sentry.setContext('guild', {
+			id: role.guild.id,
+			name: role.guild.name,
+		});
+
+		try {
+			// ignore managed role
+			if (role.managed) {
+				transaction.setStatus('cancelled');
+				transaction.finish();
+				return;
+			}
+
+			await saveGuildRole(role);
+
+			transaction.setStatus('ok');
+		} catch (error) {
+			if (error instanceof Error) console.log(error.message);
+
+			transaction.setStatus('internal_error');
+
+			Sentry.captureException(error);
+		}
+
+		transaction.finish();
 	},
 };
 

@@ -1,5 +1,7 @@
 import { BotEvent, BotEventError } from '../../../core/BotWithCommands.js';
+import SentryHelper from '../../../helpers/SentryHelper.js';
 import deleteGuild from '../../../services/deleteGuild.js';
+import * as Sentry from '@sentry/node';
 import { Guild } from 'discord.js';
 
 /**
@@ -9,8 +11,32 @@ import { Guild } from 'discord.js';
 const guildCreate: BotEvent<Guild> = {
 	name: 'guildDelete',
 	execute: async (guild) => {
-		if (!guild.available) throw new BotEventError('Guild not available');
-		await deleteGuild(guild.id);
+		const transaction = SentryHelper.startBotEventTransaction({
+			bot: guild.client.user?.username,
+			op: 'guildDelete',
+		});
+
+		Sentry.setContext('guild', {
+			id: guild.id,
+			name: guild.name,
+		});
+
+		try {
+			if (!guild.available)
+				throw new BotEventError('Guild not available');
+
+			await deleteGuild(guild.id);
+
+			transaction.setStatus('ok');
+		} catch (error) {
+			if (error instanceof Error) console.log(error.message);
+
+			transaction.setStatus('internal_error');
+
+			Sentry.captureException(error);
+		}
+
+		transaction.finish();
 	},
 };
 
