@@ -1,6 +1,12 @@
 import * as Sentry from '@sentry/node';
-import { Transaction } from '@sentry/types';
-import { Client, CommandInteraction, Interaction } from 'discord.js';
+import { Transaction, TransactionContext } from '@sentry/types';
+import { Client, ClientEvents, CommandInteraction } from 'discord.js';
+
+export interface GuildEventTransactionContext
+	extends Omit<TransactionContext, 'name'> {
+	op: keyof ClientEvents;
+	name?: string;
+}
 
 export default class SentryHelper {
 	public static startCommandInteractionCreate(
@@ -22,6 +28,14 @@ export default class SentryHelper {
 			username: interaction.user.username,
 		});
 
+		return transaction;
+	}
+
+	public static startGuildEventTransaction({
+		name = 'Guild Event',
+		...context
+	}: GuildEventTransactionContext): Transaction {
+		const transaction = Sentry.startTransaction({ name, ...context });
 		return transaction;
 	}
 }
