@@ -181,13 +181,17 @@ export default class BotWithCommands {
 
 			if (!command) return;
 
-			try {
-				// start sentry transaction
-				const transaction = SentryHelper.startCommandInteractionCreate(
-					interaction,
-					this.client
-				);
+			// start sentry transaction
+			const transaction = SentryHelper.startBotCommandTransaction({
+				op: interaction.commandName,
+				bot: interaction.client.user?.username,
+				user: {
+					id: interaction.user.id,
+					username: interaction.user.username,
+				},
+			});
 
+			try {
 				// defer reply
 				if (command.deferReply)
 					await interaction.deferReply({
@@ -198,7 +202,7 @@ export default class BotWithCommands {
 				await command.execute(interaction);
 
 				// finish sentry transaction
-				transaction.finish();
+				transaction.setStatus('ok');
 			} catch (error) {
 				// reply to user if its an user command error
 				if (error instanceof UserCommandError) {
@@ -213,13 +217,16 @@ export default class BotWithCommands {
 					this.replyErrorMessage(interaction, {
 						deferReply: command.deferReply,
 					});
-
-					// capture sentry error
-					Sentry.captureException(error);
-
 					console.log(error);
 				}
+
+				transaction.setStatus('internal_error');
+
+				// capture sentry error
+				Sentry.captureException(error);
 			}
+
+			transaction.finish();
 		});
 	}
 

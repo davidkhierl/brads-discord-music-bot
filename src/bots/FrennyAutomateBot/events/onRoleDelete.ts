@@ -10,14 +10,8 @@ import { Role } from 'discord.js';
 const onRoleDelete: BotEvent<Role> = {
 	name: 'roleDelete',
 	execute: async (role) => {
-		const transaction = SentryHelper.startGuildEventTransaction({
+		const transaction = SentryHelper.startBotEventTransaction({
 			op: 'roleDelete',
-		});
-
-		Sentry.setTag('guild_event', 'roleDelete');
-
-		Sentry.configureScope((scope) => {
-			scope.setSpan(transaction);
 		});
 
 		Sentry.setContext('role', {
@@ -34,14 +28,19 @@ const onRoleDelete: BotEvent<Role> = {
 		try {
 			// ignore managed role
 			if (role.managed) {
+				transaction.setStatus('cancelled');
 				transaction.finish();
 				return;
 			}
 
 			// delete role on database
 			await deleteRole(role.id);
+
+			transaction.setStatus('ok');
 		} catch (error) {
 			if (error instanceof Error) console.log(error.message);
+
+			transaction.setStatus('internal_error');
 
 			Sentry.captureException(error);
 		}
