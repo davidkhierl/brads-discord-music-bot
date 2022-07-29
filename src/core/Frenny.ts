@@ -121,7 +121,7 @@ export default class Frenny {
 					return;
 			}
 		} catch (error) {
-			error instanceof Error && console.log(error.message);
+			console.log(error);
 		}
 	}
 }

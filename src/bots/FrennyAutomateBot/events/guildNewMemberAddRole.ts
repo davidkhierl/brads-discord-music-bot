@@ -25,7 +25,7 @@ const guildNewMemberAddRole: BotEvent<GuildMember> = {
 
 			await guildMember.roles.add(newMembersRole);
 		} catch (error) {
-			if (error instanceof Error) console.log(error.message);
+			console.log(error);
 
 			Sentry.captureException(error);
 		}

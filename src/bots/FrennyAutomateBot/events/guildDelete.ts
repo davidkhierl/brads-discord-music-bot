@@ -29,7 +29,7 @@ const guildCreate: BotEvent<Guild> = {
 
 			transaction.setStatus('ok');
 		} catch (error) {
-			if (error instanceof Error) console.log(error.message);
+			console.log(error);
 
 			transaction.setStatus('internal_error');
 

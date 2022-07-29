@@ -157,8 +157,7 @@ export default class BotWithCommands {
 										event
 											.execute(...args)
 											.catch((error) => {
-												if (error instanceof Error)
-													console.log(error.message);
+												console.log(error);
 
 												Sentry.captureException(error);
 											})
@@ -168,8 +167,7 @@ export default class BotWithCommands {
 										event
 											.execute(...args)
 											.catch((error) => {
-												if (error instanceof Error)
-													console.log(error.message);
+												console.log(error);
 
 												Sentry.captureException(error);
 											})

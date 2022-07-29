@@ -40,7 +40,7 @@ const onRoleUpdate: BotEventRoleUpdate<Role> = {
 
 			transaction.setStatus('ok');
 		} catch (error) {
-			if (error instanceof Error) console.log(error.message);
+			if (error instanceof Error) console.log(error);
 
 			transaction.setStatus('internal_error');
 
