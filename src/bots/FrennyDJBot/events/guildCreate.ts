@@ -1,7 +1,6 @@
 import { BotEvent, BotEventError } from '../../../core/BotWithCommands.js';
 import SentryHelper from '../../../helpers/SentryHelper.js';
 import saveGuild from '../../../services/saveGuild.js';
-import saveGuildRoles from '../../../services/saveGuildRoles.js';
 import * as Sentry from '@sentry/node';
 import { Guild } from 'discord.js';
 
