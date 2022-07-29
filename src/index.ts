@@ -24,8 +24,7 @@ Sentry.init({
 	tracesSampleRate: 1.0,
 	integrations: [
 		new RewriteFrames({
-			root: process.cwd(),
-			prefix: 'src/',
+			root: __rootdir__ ?? process.cwd(),
 		}),
 		new Tracing.Integrations.Prisma({ client: prisma }),
 		new Transaction(),
