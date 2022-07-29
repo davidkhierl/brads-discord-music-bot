@@ -16,6 +16,7 @@ declare global {
 			DISCORD_FRENNY_DEV_GUILD_ID: string;
 			DISCORD_GUILD_ID: string;
 			SENTRY_DSN: string;
+			SERVER_NAME?: string;
 		}
 
 		interface Global {

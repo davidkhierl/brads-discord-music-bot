@@ -22,6 +22,7 @@ Sentry.init({
 	dsn: process.env.SENTRY_DSN,
 	release: releaseName,
 	tracesSampleRate: 1.0,
+	serverName: process.env.SERVER_NAME,
 	integrations: [
 		new RewriteFrames({
 			root: __rootdir__ ?? process.cwd(),
