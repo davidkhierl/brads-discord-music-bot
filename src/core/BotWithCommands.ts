@@ -191,6 +191,11 @@ export default class BotWithCommands {
 				},
 			});
 
+			Sentry.setContext('guild', {
+				id: interaction.guild?.id,
+				name: interaction.guild?.name,
+			});
+
 			try {
 				// defer reply
 				if (command.deferReply)
