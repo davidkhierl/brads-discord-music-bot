@@ -33,7 +33,10 @@ const onRoleDelete: BotEvent<Role> = {
 
 		try {
 			// ignore managed role
-			if (role.managed) return;
+			if (role.managed) {
+				transaction.finish();
+				return;
+			}
 
 			// delete role on database
 			await deleteRole(role.id);
