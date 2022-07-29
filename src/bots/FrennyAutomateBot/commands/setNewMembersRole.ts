@@ -172,6 +172,8 @@ export default class setNewMembersRole extends BotCommandBuilder {
 						components: [],
 					});
 
+					console.log(error);
+
 					return;
 				}
 				console.log(error);
