@@ -29,7 +29,11 @@
 			"error",
 			{ "max": 2, "maxEOF": 1, "maxBOF": 0 }
 		],
-		"no-shadow": ["error", { "allow": ["err", "resolve", "reject"] }],
+		"no-shadow": "off",
+		"@typescript-eslint/no-shadow": [
+			"error",
+			{ "allow": ["err", "resolve", "reject"] }
+		],
 		"no-trailing-spaces": ["error"],
 		"no-unused-vars": "off",
 		"no-var": "error",
