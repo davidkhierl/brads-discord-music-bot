@@ -7,6 +7,9 @@ declare global {
 		interface ProcessEnv {
 			NODE_ENV: string;
 			DEPLOY_COMMANDS?: 'guild' | 'global';
+			DISCORD_APP_ID: string;
+			DISCORD_PUB_KEY: string;
+			DISCORD_BOT_TOKEN: string;
 			DISCORD_FRENNY_DJ_APP_ID: string;
 			DISCORD_FRENNY_DJ_PUBKEY: string;
 			DISCORD_FRENNY_DJ_BOT_TOKEN: string;
