@@ -1,5 +1,6 @@
 import BotCommandBuilder from '../../../core/BotCommandBuilder.js';
 import { UserCommandError } from '../../../core/BotWithCommands.js';
+import Embeds from '../../../core/components/Embeds.js';
 import prisma from '../../../lib/prisma.js';
 import getGuildNewMembersRole from '../../../services/getGuildNewMembersRole.js';
 import updateGuildNewMembersRole from '../../../services/updateGuildNewMembersRole.js';
@@ -62,10 +63,9 @@ export default class setNewMembersRole extends BotCommandBuilder {
 				.setStyle(ButtonStyle.Primary)
 		);
 
-		// display the selectmenu
+		// display the select menu
 		await interaction.followUp({
-			content:
-				'Select the role to be applied when users join your server',
+			content: 'Select roles for new members',
 			components: [selectMenuRow],
 		});
 
@@ -83,8 +83,8 @@ export default class setNewMembersRole extends BotCommandBuilder {
 
 				if (!selectMenuInteraction.guildId) {
 					selectMenuInteraction.editReply({
-						content:
-							'Something went wrong while executing this command',
+						embeds: [Embeds.ErrorMessage()],
+						content: '',
 						components: [],
 					});
 
@@ -99,20 +99,29 @@ export default class setNewMembersRole extends BotCommandBuilder {
 				);
 
 				await selectMenuInteraction.editReply({
-					content:
-						'New members role updated! do you want to apply this to all existing members?',
+					embeds: [
+						Embeds.InfoMessage({
+							title: 'New members roles set!',
+							description:
+								'Do you want to apply this roles to all existing members?',
+						}),
+					],
+					content: '',
+
 					components: [buttonRow],
 				});
 
 				selectMenuCollector.stop();
 			} catch (error) {
-				console.log(error);
-				selectMenuCollector.stop();
 				selectMenuInteraction.editReply({
-					content:
-						'Something went wrong while executing this command',
+					embeds: [Embeds.ErrorMessage()],
+					content: '',
 					components: [],
 				});
+
+				console.log(error);
+
+				selectMenuCollector.stop();
 			}
 		});
 
@@ -148,9 +157,11 @@ export default class setNewMembersRole extends BotCommandBuilder {
 					}
 
 					buttonInteraction.update({
-						content: 'Success!',
+						embeds: [Embeds.SuccessMessage()],
+						content: '',
 						components: [],
 					});
+
 					buttonCollector.stop();
 				}
 
@@ -159,16 +170,24 @@ export default class setNewMembersRole extends BotCommandBuilder {
 					'newMembersRoleApplyToExistingMembersDecline'
 				) {
 					buttonInteraction.update({
-						content: 'Done!',
+						embeds: [Embeds.SuccessMessage()],
+						content: '',
 						components: [],
 					});
+
 					buttonCollector.stop();
 				}
 			} catch (error) {
-				if (error instanceof DiscordAPIError) {
+				if (error instanceof DiscordAPIError && error.code === 50013) {
 					buttonInteraction.update({
-						content:
-							'Frenny Automate Bot lacks permission. Please make sure to set bot role higher than all the roles in this server',
+						embeds: [
+							Embeds.ErrorMessage({
+								title: "I can't give one fo the role you selected",
+								description:
+									'Please fix it by putting my role **Frenny** above all the roles you selected',
+							}),
+						],
+						content: '',
 						components: [],
 					});
 
@@ -177,10 +196,12 @@ export default class setNewMembersRole extends BotCommandBuilder {
 					return;
 				}
 				console.log(error);
+
 				buttonCollector.stop();
+
 				buttonInteraction.update({
-					content:
-						'Something went wrong while executing this command',
+					embeds: [Embeds.ErrorMessage()],
+					content: '',
 					components: [],
 				});
 			}
