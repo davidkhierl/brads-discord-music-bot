@@ -17,7 +17,8 @@
 		"start": "node -r dotenv/config build/index.js",
 		"postinstall": "yarn gen-sentry-release-name",
 		"deploy-commands": "node -r dotenv/config build/deploy-commands.js",
-		"gen-sentry-release-name": "sentry-cli releases propose-version --silent > sentry-release-name.txt"
+		"gen-sentry-release-name": "sentry-cli releases propose-version --silent > sentry-release-name.txt",
+		"delete-command": "node ./scripts/deleteCommand.js"
 	},
 	"dependencies": {
 		"@discordjs/builders": "^1.0.0",
@@ -42,9 +43,11 @@
 		"@types/node": "^18.6.1",
 		"@typescript-eslint/eslint-plugin": "^5.31.0",
 		"@typescript-eslint/parser": "^5.31.0",
+		"command-line-args": "^5.2.1",
 		"eslint": "^8.20.0",
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-prettier": "^4.2.1",
+		"listr2": "^5.0.1",
 		"nodemon": "^2.0.19",
 		"prettier": "^2.7.1",
 		"prisma": "^4.1.0",
