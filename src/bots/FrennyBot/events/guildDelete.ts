@@ -1,20 +1,20 @@
-import { BotEvent, BotEventError } from '../../../core/Bot.js';
+import { BotEvent, BotEventError } from '../../../core/bot/Bot.js';
 import SentryHelper from '../../../helpers/SentryHelper.js';
-import saveGuild from '../../../services/saveGuild.js';
-import saveGuildRoles from '../../../services/saveGuildRoles.js';
+import deleteGuild from '../../../services/deleteGuild.js';
+import setGuildActiveState from '../../../services/setGuildActiveState.js';
 import * as Sentry from '@sentry/node';
 import { Guild } from 'discord.js';
 
 /**
- * Runs when bot joins a guild.
- * here we will save guild and roles data.
+ * Runs when bot removed from the
+ * guild. Deletes all guild records
  */
 const guildCreate: BotEvent<Guild> = {
-	name: 'guildCreate',
+	name: 'guildDelete',
 	execute: async (guild) => {
 		const transaction = SentryHelper.startBotEventTransaction({
 			bot: guild.client.user?.username,
-			op: 'guildCreate',
+			op: 'guildDelete',
 		});
 
 		Sentry.setContext('guild', {
@@ -22,21 +22,11 @@ const guildCreate: BotEvent<Guild> = {
 			name: guild.name,
 		});
 
-		console.log((await guild.fetchIntegrations()).toJSON());
 		try {
 			if (!guild.available)
 				throw new BotEventError('Guild not available');
 
-			// save the guild to database
-			await saveGuild(guild);
-
-			// filter only user created roles
-			const roles = guild.roles.cache
-				.filter((role) => !role.managed && role.name !== '@everyone')
-				.toJSON();
-
-			// save roles to database and connect it to guild
-			await saveGuildRoles(roles);
+			await setGuildActiveState(guild.id, false);
 
 			transaction.setStatus('ok');
 		} catch (error) {

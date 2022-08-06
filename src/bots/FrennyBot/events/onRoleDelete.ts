@@ -1,4 +1,4 @@
-import { BotEvent } from '../../../core/Bot.js';
+import { BotEvent } from '../../../core/bot/Bot.js';
 import SentryHelper from '../../../helpers/SentryHelper.js';
 import deleteRole from '../../../services/deleteRole.js';
 import * as Sentry from '@sentry/node';

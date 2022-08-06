@@ -1,8 +1,8 @@
+import { UserCommandError } from '../../../core/Bot.js';
 import BotCommandBuilder from '../../../core/BotCommandBuilder.js';
 import FrennyDJBot from '../FrennyDJBot.js';
 import Music from '../Music.js';
 import { CommandInteraction } from 'discord.js';
-import { UserCommandError } from '../../../core/BotWithCommands.js';
 
 export default class stop extends BotCommandBuilder {
 	constructor() {

@@ -1,4 +1,4 @@
-import { BotEvent } from '../../../core/BotWithCommands.js';
+import { BotEvent } from '../../../core/Bot.js';
 import saveBot from '../../../services/saveBot.js';
 import chalk from 'chalk';
 import { log } from 'console';

@@ -1,21 +1,21 @@
-import BotWithCommands from './BotWithCommands.js';
+import Bot from './Bot.js';
 import chalk from 'chalk';
 import { log } from 'console';
 import { Collection } from 'discord.js';
 
-export default class Frenny {
+export default class BotManager {
 	/**
-	 * Frenny instance
+	 * BotManager instance
 	 */
-	private static instance: Frenny;
+	private static instance: BotManager;
 
 	/**
 	 * Collection of registered bots
 	 */
-	public static bots = new Collection<string, BotWithCommands>();
+	public static bots = new Collection<string, Bot>();
 
-	private constructor(...bots: BotWithCommands[]) {
-		Frenny.setBotsCollection(bots);
+	private constructor(...bots: Bot[]) {
+		BotManager.setBotsCollection(bots);
 	}
 
 	/**
@@ -23,18 +23,18 @@ export default class Frenny {
 	 */
 	public start() {
 		log(chalk.bgBlue.bold.white(' Starting Frenny Bots '));
-		Frenny.bots.forEach((bot) => {
+		BotManager.bots.forEach((bot) => {
 			bot.start();
 		});
 	}
 
 	/**
-	 * Create and initialize Frenny
+	 * Create and initialize BotManager
 	 * @returns Frenny class instance
 	 */
-	public static create(...bots: BotWithCommands[]): Frenny {
+	public static create(...bots: Bot[]): BotManager {
 		if (!this.instance) {
-			this.instance = new Frenny(...bots);
+			this.instance = new BotManager(...bots);
 		}
 
 		return this.instance;
@@ -42,12 +42,12 @@ export default class Frenny {
 
 	/**
 	 * Set bot collection
-	 * @param bots BotWithCommands[]
+	 * @param bots Bot[]
 	 */
-	static setBotsCollection(bots: BotWithCommands[]) {
+	static setBotsCollection(bots: Bot[]) {
 		for (const bot of bots) {
 			if (bot.name) {
-				Frenny.bots.set(bot.name, bot);
+				BotManager.bots.set(bot.name, bot);
 			}
 		}
 	}
@@ -56,7 +56,7 @@ export default class Frenny {
 	 * Deploy all bot commands
 	 */
 	public static async deployCommands() {
-		if (!Frenny.bots.size) {
+		if (!BotManager.bots.size) {
 			log(chalk.blue('Deploying Commands'));
 			console.error(chalk.redBright('[Failed]'), '0 bots instance found');
 			return;
@@ -67,7 +67,7 @@ export default class Frenny {
 				case 'guild':
 					log(
 						chalk.blue('Deploying Commands to Guild:'),
-						process.env.DISCORD_FRENNY_DEV_GUILD_ID
+						process.env.DISCORD_DEVELOPMENT_GUILD_ID
 					);
 
 					if (process.env.NODE_ENV === 'production') {
@@ -77,9 +77,9 @@ export default class Frenny {
 							)
 						);
 					} else {
-						Frenny.bots.forEach((bot) => {
+						BotManager.bots.forEach((bot) => {
 							bot.deployCommandsToGuild(
-								process.env.DISCORD_FRENNY_DEV_GUILD_ID
+								process.env.DISCORD_DEVELOPMENT_GUILD_ID
 							)
 								.then(() => {
 									log(
@@ -106,7 +106,7 @@ export default class Frenny {
 
 					log(chalk.blue('Deploying Commands Globally'));
 
-					Frenny.bots.forEach((bot) => {
+					BotManager.bots.forEach((bot) => {
 						bot.deployCommandsGlobally().then(() => {
 							log(
 								chalk.green('[Deployed Commands]:'),
@@ -127,6 +127,6 @@ export default class Frenny {
 }
 
 /**
- * FrennyError
+ * BotManagerError
  */
-export class FrennyError extends Error {}
+export class BotManagerError extends Error {}

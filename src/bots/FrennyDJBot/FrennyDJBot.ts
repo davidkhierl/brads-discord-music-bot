@@ -1,4 +1,4 @@
-import BotWithCommands from '../../core/BotWithCommands.js';
+import Bot from '../../core/Bot.js';
 import Frenny from '../../core/Frenny.js';
 import dirResolver from '../../utils/dirResolver.js';
 import { Player } from 'discord-music-player';
@@ -14,7 +14,7 @@ import { Client, IntentsBitField, TextChannel } from 'discord.js';
  * streaming platform will be added soon like
  * Spotify.
  */
-export default class FrennyDJBot extends BotWithCommands {
+export default class FrennyDJBot extends Bot {
 	/**
 	 * Frenny DJ Player instance
 	 */
@@ -107,10 +107,10 @@ export default class FrennyDJBot extends BotWithCommands {
 
 /**
  * FrennyDJBot type guard
- * @param bot BotWithCommands
+ * @param bot Bot
  * @returns boolean
  */
-export function isFrennyDJBot(bot?: BotWithCommands): bot is FrennyDJBot {
+export function isFrennyDJBot(bot?: Bot): bot is FrennyDJBot {
 	return bot instanceof FrennyDJBot;
 }
 

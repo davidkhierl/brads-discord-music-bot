@@ -1,4 +1,4 @@
-import { BotEvent, BotEventError } from '../../../core/Bot.js';
+import { BotEvent, BotEventError } from '../../../core/bot/Bot.js';
 import SentryHelper from '../../../helpers/SentryHelper.js';
 import saveGuild from '../../../services/saveGuild.js';
 import saveGuildRoles from '../../../services/saveGuildRoles.js';
@@ -22,7 +22,6 @@ const guildCreate: BotEvent<Guild> = {
 			name: guild.name,
 		});
 
-		console.log((await guild.fetchIntegrations()).toJSON());
 		try {
 			if (!guild.available)
 				throw new BotEventError('Guild not available');

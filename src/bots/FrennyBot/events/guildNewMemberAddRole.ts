@@ -1,4 +1,4 @@
-import { BotEvent, BotEventError } from '../../../core/Bot.js';
+import { BotEvent, BotEventError } from '../../../core/bot/Bot.js';
 import getGuildDefaultRoleId from '../../../services/getGuildDefaultRoleId.js';
 import * as Sentry from '@sentry/node';
 import { GuildMember } from 'discord.js';

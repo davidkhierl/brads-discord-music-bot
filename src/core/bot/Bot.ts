@@ -1,6 +1,7 @@
-import SentryHelper from '../helpers/SentryHelper.js';
+import SentryHelper from '../../helpers/SentryHelper.js';
 import BotCommandBuilder from './BotCommandBuilder.js';
-import { FrennyError } from './Frenny.js';
+import { BotManagerError } from './BotManager.js';
+import Embeds, { EmbedContent } from './components/Embeds.js';
 import { REST } from '@discordjs/rest';
 import * as Sentry from '@sentry/node';
 import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
@@ -25,7 +26,7 @@ export interface BotEvent<T> extends BotEventModule {
 	execute: (args: T) => Promise<void>;
 }
 
-export interface BotWithCommandsConstructor {
+export interface BotConstructor {
 	client: Client;
 	commandsDir: string;
 	eventsDir?: string;
@@ -33,11 +34,11 @@ export interface BotWithCommandsConstructor {
 	appId: string;
 }
 
-export default class BotWithCommands {
+export default class Bot {
 	/**
 	 * Bot name
 	 */
-	public name = BotWithCommands.name;
+	public name = Bot.name;
 
 	/**
 	 * Bot client
@@ -74,7 +75,7 @@ export default class BotWithCommands {
 	 */
 	private readonly rest: REST;
 
-	constructor(props: BotWithCommandsConstructor) {
+	constructor(props: BotConstructor) {
 		this.client = props.client;
 
 		this.appId = props.appId;
@@ -110,21 +111,19 @@ export default class BotWithCommands {
 	 */
 	private async replyErrorMessage(
 		interaction: ChatInputCommandInteraction,
-		options?: { message?: string; deferReply?: boolean }
+		options?: { deferReply?: boolean } & Partial<EmbedContent>
 	) {
-		const errorMessage =
-			options?.message ??
-			'Sorry there was an error executing this command';
-
 		if (options?.deferReply)
 			await interaction.followUp({
 				ephemeral: true,
-				content: errorMessage,
+				embeds: [Embeds.ErrorMessage({ ...options })],
+				content: '',
 			});
 		else
 			await interaction.reply({
 				ephemeral: true,
-				content: errorMessage,
+				embeds: [Embeds.ErrorMessage({ ...options })],
+				content: '',
 			});
 	}
 
@@ -225,7 +224,7 @@ export default class BotWithCommands {
 				if (error instanceof UserCommandError) {
 					this.replyErrorMessage(interaction, {
 						deferReply: command.deferReply,
-						message: error.message,
+						title: error.message,
 					});
 				}
 
@@ -322,7 +321,7 @@ export default class BotWithCommands {
 	public async deployCommandsToGuild(guildId: string) {
 		const commands = await this.getAllCommandsToJSON();
 
-		if (!commands) throw new FrennyError('No Commands Found');
+		if (!commands) throw new BotManagerError('No Commands Found');
 
 		return this.rest.put(
 			Routes.applicationGuildCommands(this.appId, guildId),
@@ -338,7 +337,7 @@ export default class BotWithCommands {
 	public async deployCommandsGlobally() {
 		const commands = await this.getAllCommandsToJSON();
 
-		if (!commands) throw new FrennyError('No Commands Found');
+		if (!commands) throw new BotManagerError('No Commands Found');
 
 		return this.rest.put(Routes.applicationCommands(this.appId), {
 			body: commands,
@@ -347,9 +346,9 @@ export default class BotWithCommands {
 }
 
 /**
- * BotWithCommands error
+ * Bot error
  */
-export class BotWithCommandsError extends Error {}
+export class BotError extends Error {}
 
 /**
  * Error caused by user initiating commands

@@ -13,7 +13,7 @@ async function saveGuild(guild: Guild) {
 		create: {
 			id: guild.id,
 			name: guild.name,
-			bot: { connect: { id: guild.client.user?.id } },
+			isActive: true,
 		},
 	});
 }

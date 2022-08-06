@@ -1,6 +1,6 @@
 import { ColorResolvable, EmbedBuilder } from 'discord.js';
 
-interface EmbedContent {
+export interface EmbedContent {
 	title: string;
 	description?: string;
 	color?: ColorResolvable;

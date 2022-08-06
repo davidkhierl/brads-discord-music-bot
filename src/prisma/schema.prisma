@@ -8,19 +8,21 @@ datasource db {
 }
 
 model Bot {
-  id    String  @id @map("_id") @db.String
-  name  String
-  guild Guild[]
+  id   String @id @map("_id") @db.String
+  name String
+
+  @@map("bots")
 }
 
 model Guild {
-  id             String  @id @map("_id") @db.String
-  name           String
-  bot            Bot     @relation(fields: [botId], references: [id], onDelete: Cascade)
-  roles          Role[]
-  newMembersRole String?
-  botId          String
-  roleId         String?
+  id            String  @id @map("_id") @db.String
+  name          String
+  roles         Role[]
+  defaultRoleId String?
+  isActive      Boolean
+  roleId        String?
+
+  @@map("guilds")
 }
 
 model Role {
@@ -28,6 +30,8 @@ model Role {
   name    String
   guild   Guild?  @relation(fields: [guildId], references: [id], onDelete: Cascade)
   guildId String?
+
+  @@map("roles")
 }
 
 // Next Auth

@@ -1,17 +1,18 @@
-import { BotEvent } from '../../../core/Bot.js';
+import { BotEvent } from '../../../core/bot/Bot.js';
 import SentryHelper from '../../../helpers/SentryHelper.js';
-import deleteRole from '../../../services/deleteRole.js';
+import saveGuildRole from '../../../services/saveGuildRole.js';
 import * as Sentry from '@sentry/node';
 import { Role } from 'discord.js';
 
 /**
- * Delete guild role on role delete
+ * Save new role to database
+ * when user creates new role.
  */
-const onRoleDelete: BotEvent<Role> = {
-	name: 'roleDelete',
+const onRoleCreate: BotEvent<Role> = {
+	name: 'roleCreate',
 	execute: async (role) => {
 		const transaction = SentryHelper.startBotEventTransaction({
-			op: 'roleDelete',
+			op: 'roleCreate',
 		});
 
 		Sentry.setContext('role', {
@@ -33,8 +34,7 @@ const onRoleDelete: BotEvent<Role> = {
 				return;
 			}
 
-			// delete role on database
-			await deleteRole(role.id);
+			await saveGuildRole(role);
 
 			transaction.setStatus('ok');
 		} catch (error) {
@@ -49,4 +49,4 @@ const onRoleDelete: BotEvent<Role> = {
 	},
 };
 
-export default onRoleDelete;
+export default onRoleCreate;

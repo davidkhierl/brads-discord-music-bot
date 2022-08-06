@@ -1,4 +1,4 @@
-import { BotEventModule } from '../../../core/Bot.js';
+import { BotEventModule } from '../../../core/bot/Bot.js';
 import SentryHelper from '../../../helpers/SentryHelper.js';
 import updateGuildRole from '../../../services/updateGuildRole.js';
 import * as Sentry from '@sentry/node';

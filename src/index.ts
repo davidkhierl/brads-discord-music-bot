@@ -1,6 +1,5 @@
-import FrennyAutomateBot from './bots/FrennyAutomateBot/FrennyAutomateBot.js';
-import FrennyDJBot from './bots/FrennyDJBot/FrennyDJBot.js';
-import Frenny from './core/Frenny.js';
+import FrennyBot from './bots/FrennyBot/FrennyBot.js';
+import BotManager from './core/bot/BotManager.js';
 import prisma from './lib/prisma.js';
 import { __rootdir__ } from './root.js';
 import getSentryReleaseName from './utils/getSentryReleaseName.js';
@@ -32,6 +31,6 @@ Sentry.init({
 	],
 });
 
-export const frenny = Frenny.create(new FrennyAutomateBot(), new FrennyDJBot());
+export const frenny = BotManager.create(new FrennyBot());
 
 frenny.start();

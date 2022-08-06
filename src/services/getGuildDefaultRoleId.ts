@@ -1,13 +1,14 @@
 import prisma from '../lib/prisma.js';
 
 /**
- * Get the guild new members role id
+ * Get the guild default role id
  * @param guildId string
  * @returns string
  */
-async function getGuildNewMembersRole(guildId: string) {
+async function getGuildDefaultRoleId(guildId: string) {
 	const guild = await prisma.guild.findUnique({ where: { id: guildId } });
-	return guild?.newMembersRole;
+
+	return guild?.defaultRoleId;
 }
 
-export default getGuildNewMembersRole;
+export default getGuildDefaultRoleId;

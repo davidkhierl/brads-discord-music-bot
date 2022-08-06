@@ -1,9 +1,9 @@
-import BotWithCommands from '../../core/BotWithCommands.js';
-import Frenny from '../../core/Frenny.js';
+import Bot from '../../core/bot/Bot.js';
+import Frenny from '../../core/bot/BotManager.js';
 import dirResolver from '../../utils/dirResolver.js';
 import { Client, IntentsBitField } from 'discord.js';
 
-export default class FrennyAutomateBot extends BotWithCommands {
+export default class FrennyAutomateBot extends Bot {
 	constructor() {
 		super({
 			client: new Client({
@@ -24,12 +24,10 @@ export default class FrennyAutomateBot extends BotWithCommands {
 
 /**
  * FrennyAutomateBot type guard
- * @param bot BotWithCommands
+ * @param bot Bot
  * @returns boolean
  */
-export function isFrennyAutomateBot(
-	bot?: BotWithCommands
-): bot is FrennyAutomateBot {
+export function isFrennyAutomateBot(bot?: Bot): bot is FrennyAutomateBot {
 	return bot instanceof FrennyAutomateBot;
 }
 

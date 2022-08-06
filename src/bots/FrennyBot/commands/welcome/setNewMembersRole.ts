@@ -1,9 +1,9 @@
-import { UserCommandError } from '../../../core/bot/Bot.js';
-import BotCommandBuilder from '../../../core/bot/BotCommandBuilder.js';
-import Embeds from '../../../core/bot/components/Embeds.js';
-import prisma from '../../../lib/prisma.js';
-import getGuildDefaultRoleId from '../../../services/getGuildDefaultRoleId.js';
-import updateGuildDefaultRoleId from '../../../services/updateGuildDefaultRoleId.js';
+import { UserCommandError } from '../../../../core/bot/Bot.js';
+import BotCommandBuilder from '../../../../core/bot/BotCommandBuilder.js';
+import Embeds from '../../../../core/bot/components/Embeds.js';
+import prisma from '../../../../lib/prisma.js';
+import getGuildDefaultRoleId from '../../../../services/getGuildDefaultRoleId.js';
+import updateGuildDefaultRoleId from '../../../../services/updateGuildDefaultRoleId.js';
 import { ButtonBuilder } from '@discordjs/builders';
 import {
 	ActionRowBuilder,
