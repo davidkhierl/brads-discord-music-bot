@@ -1,4 +1,4 @@
-import { UserCommandError } from '../../core/bot/Bot.js';
+import { UserCommandError } from '../bot/Bot.js';
 import { Player, Queue } from 'discord-music-player';
 import {
 	CacheType,

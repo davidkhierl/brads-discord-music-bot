@@ -1,5 +1,6 @@
-import FrennyBot from './bots/FrennyBot/FrennyBot.js';
+import FrennyBot, { getFrennyBotInstance } from './bots/FrennyBot/FrennyBot.js';
 import BotManager from './core/bot/BotManager.js';
+import Music from './core/modules/Music.js';
 import prisma from './lib/prisma.js';
 import { __rootdir__ } from './root.js';
 import getSentryReleaseName from './utils/getSentryReleaseName.js';
@@ -18,7 +19,7 @@ console.log('[Sentry Release]:', releaseName);
 
 Sentry.init({
 	environment: process.env.NODE_ENV ?? 'development',
-	dsn: process.env.SENTRY_DSN,
+	// dsn: process.env.SENTRY_DSN,
 	release: releaseName,
 	tracesSampleRate: 1.0,
 	serverName: process.env.SERVER_NAME,
@@ -31,6 +32,14 @@ Sentry.init({
 	],
 });
 
-export const frenny = BotManager.create(new FrennyBot());
+export const botManager = BotManager.create(new FrennyBot());
 
-frenny.start();
+const frennyBot = getFrennyBotInstance();
+
+frennyBot.registerModules(Music);
+
+// frennyBot.deployCommandsToGuild(process.env.DISCORD_DEVELOPMENT_GUILD_ID, {
+// 	subDirectory: ['music'],
+// });
+
+botManager.start();

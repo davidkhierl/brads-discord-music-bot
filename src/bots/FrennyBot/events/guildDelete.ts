@@ -1,7 +1,9 @@
 import { BotEvent, BotEventError } from '../../../core/bot/Bot.js';
 import SentryHelper from '../../../helpers/SentryHelper.js';
-import deleteGuild from '../../../services/deleteGuild.js';
+import deleteGuildCommands from '../../../services/deleteGuildCommands.js';
+import deleteGuildRoles from '../../../services/deleteGuildRoles.js';
 import setGuildActiveState from '../../../services/setGuildActiveState.js';
+import updateGuildDefaultRoleId from '../../../services/updateGuildDefaultRoleId.js';
 import * as Sentry from '@sentry/node';
 import { Guild } from 'discord.js';
 
@@ -27,6 +29,12 @@ const guildCreate: BotEvent<Guild> = {
 				throw new BotEventError('Guild not available');
 
 			await setGuildActiveState(guild.id, false);
+
+			await updateGuildDefaultRoleId(guild.id, null);
+
+			await deleteGuildCommands(guild.id);
+
+			await deleteGuildRoles(guild.id);
 
 			transaction.setStatus('ok');
 		} catch (error) {

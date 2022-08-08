@@ -6,9 +6,11 @@ import prisma from '../lib/prisma.js';
  * @param guildId string
  * @returns Guild
  */
-async function updateGuildDefaultRoleId(roleId: string, guildId: string) {
+async function updateGuildDefaultRoleId(
+	guildId: string,
+	roleId: string | null
+) {
 	// throw an error when role is not found
-	await prisma.role.findUniqueOrThrow({ where: { id: roleId } });
 
 	return await prisma.guild.update({
 		where: { id: guildId },

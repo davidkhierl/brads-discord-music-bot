@@ -1,6 +1,6 @@
 import { UserCommandError } from '../../../../core/bot/Bot.js';
 import BotCommandBuilder from '../../../../core/bot/BotCommandBuilder.js';
-import Embeds from '../../../../core/bot/components/Embeds.js';
+import Embeds from '../../../../core/components/Embeds.js';
 import prisma from '../../../../lib/prisma.js';
 import getGuildDefaultRoleId from '../../../../services/getGuildDefaultRoleId.js';
 import updateGuildDefaultRoleId from '../../../../services/updateGuildDefaultRoleId.js';
@@ -12,7 +12,9 @@ import {
 	ComponentType,
 	DiscordAPIError,
 	SelectMenuBuilder,
+	SelectMenuComponentOptionData,
 } from 'discord.js';
+import { concat } from 'lodash-es';
 
 export default class setNewMembersRole extends BotCommandBuilder {
 	constructor() {
@@ -28,11 +30,15 @@ export default class setNewMembersRole extends BotCommandBuilder {
 	}
 
 	async execute(interaction: ChatInputCommandInteraction): Promise<void> {
+		const guild = await prisma.guild.findUnique({
+			where: { id: interaction.guild?.id },
+		});
+
 		const roles = await prisma.role.findMany({ include: { guild: true } });
 
-		if (!roles)
+		if (!roles.length)
 			throw new UserCommandError(
-				'Found 0 roles, make sure to add new roles'
+				'No roles found, please make sure to add roles first'
 			);
 
 		// select menu component
@@ -42,11 +48,29 @@ export default class setNewMembersRole extends BotCommandBuilder {
 					.setCustomId('newMembersRole')
 					.setPlaceholder('Select Role')
 					.addOptions(
-						...roles.map((role) => ({
-							label: role.name,
-							value: role.id,
-							default: role.id === role.guild?.defaultRoleId,
-						}))
+						...concat(
+							roles.map(
+								(role) =>
+									({
+										label: role.name,
+										value: role.id,
+										default:
+											role.id ===
+											role.guild?.defaultRoleId,
+									} as SelectMenuComponentOptionData)
+							),
+							guild?.defaultRoleId
+								? [
+										{
+											label: 'Unset',
+											value: 'unset',
+											default: !guild?.defaultRoleId,
+											description:
+												'Remove the default role',
+										},
+								  ]
+								: []
+						)
 					)
 					.setMaxValues(1)
 			);
@@ -94,9 +118,21 @@ export default class setNewMembersRole extends BotCommandBuilder {
 				}
 
 				await updateGuildDefaultRoleId(
-					selectMenuInteraction.values[0],
-					selectMenuInteraction.guildId
+					selectMenuInteraction.guildId,
+					selectMenuInteraction.values[0] === 'unset'
+						? null
+						: selectMenuInteraction.values[0]
 				);
+
+				if (selectMenuInteraction.values[0] === 'unset') {
+					await selectMenuInteraction.editReply({
+						embeds: [Embeds.SuccessMessage()],
+						content: '',
+						components: [],
+					});
+
+					return;
+				}
 
 				await selectMenuInteraction.editReply({
 					embeds: [

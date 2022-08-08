@@ -1,5 +1,5 @@
 import Bot from '../../core/bot/Bot.js';
-import Frenny from '../../core/bot/BotManager.js';
+import BotManager from '../../core/bot/BotManager.js';
 import dirResolver from '../../utils/dirResolver.js';
 import { Client, IntentsBitField } from 'discord.js';
 
@@ -10,6 +10,7 @@ export default class FrennyBot extends Bot {
 				intents: [
 					IntentsBitField.Flags.Guilds,
 					IntentsBitField.Flags.GuildMembers,
+					IntentsBitField.Flags.GuildVoiceStates,
 				],
 			}),
 			commandsDir: dirResolver(import.meta.url, 'commands'),
@@ -36,7 +37,7 @@ export function isFrennyBot(bot?: Bot): bot is FrennyBot {
  * @returns instance of FrennyBot
  */
 export function getFrennyBotInstance(): FrennyBot {
-	const instance = Frenny.bots.get(FrennyBot.name);
+	const instance = BotManager.bots.get(FrennyBot.name);
 
 	if (!isFrennyBot(instance))
 		throw new Error('No Instance of FrennyBot Found');

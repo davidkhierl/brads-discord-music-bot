@@ -15,9 +15,10 @@ model Bot {
 }
 
 model Guild {
-  id            String  @id @map("_id") @db.String
+  id            String    @id @map("_id") @db.String
   name          String
   roles         Role[]
+  commands      Command[]
   defaultRoleId String?
   isActive      Boolean
   roleId        String?
@@ -26,12 +27,25 @@ model Guild {
 }
 
 model Role {
-  id      String  @id @map("_id") @db.String
-  name    String
+  id   String @id @map("_id") @db.String
+  name String
+
   guild   Guild?  @relation(fields: [guildId], references: [id], onDelete: Cascade)
   guildId String?
 
   @@map("roles")
+}
+
+model Command {
+  id          String @id @map("_id") @db.String
+  name        String
+  description String
+  group       String
+
+  guild   Guild?  @relation(fields: [guildId], references: [id], onDelete: Cascade)
+  guildId String?
+
+  @@map("commands")
 }
 
 // Next Auth

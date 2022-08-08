@@ -1,13 +1,16 @@
 import { BotEvent, BotEventError } from '../../../core/bot/Bot.js';
 import SentryHelper from '../../../helpers/SentryHelper.js';
 import saveGuild from '../../../services/saveGuild.js';
+import saveGuildCommands from '../../../services/saveGuildCommands.js';
 import saveGuildRoles from '../../../services/saveGuildRoles.js';
+import { getFrennyBotInstance } from '../FrennyBot.js';
+import { Command } from '@prisma/client';
 import * as Sentry from '@sentry/node';
 import { Guild } from 'discord.js';
 
 /**
  * Runs when bot joins a guild.
- * here we will save guild and roles data.
+ * Saves all necessary guild data to the database and register commands to the guild
  */
 const guildCreate: BotEvent<Guild> = {
 	name: 'guildCreate',
@@ -26,16 +29,30 @@ const guildCreate: BotEvent<Guild> = {
 			if (!guild.available)
 				throw new BotEventError('Guild not available');
 
-			// save the guild to database
-			await saveGuild(guild);
+			await saveGuild({ id: guild.id, name: guild.name, isActive: true });
 
 			// filter only user created roles
 			const roles = guild.roles.cache
 				.filter((role) => !role.managed && role.name !== '@everyone')
 				.toJSON();
 
-			// save roles to database and connect it to guild
 			await saveGuildRoles(roles);
+
+			const frenny = getFrennyBotInstance();
+
+			const commands = await frenny.deployCommandsToGuild(guild.id, {
+				subDirectory: ['welcome'],
+			});
+
+			await saveGuildCommands(
+				commands.map((command) => ({
+					id: command.id,
+					name: command.name,
+					description: command.description,
+					group: 'welcome',
+					guildId: guild.id,
+				}))
+			);
 
 			transaction.setStatus('ok');
 		} catch (error) {

@@ -22,7 +22,7 @@ export default class BotManager {
 	 * Start all bots
 	 */
 	public start() {
-		log(chalk.bgBlue.bold.white(' Starting Frenny Bots '));
+		log(chalk.bgBlue.bold.white(' Starting Bots '));
 		BotManager.bots.forEach((bot) => {
 			bot.start();
 		});

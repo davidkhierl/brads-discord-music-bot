@@ -1,5 +1,5 @@
-import Bot from '../../core/Bot.js';
-import Frenny from '../../core/Frenny.js';
+import Bot from '../../core/bot/Bot.js';
+import BotManager from '../../core/bot/BotManager.js';
 import dirResolver from '../../utils/dirResolver.js';
 import { Player } from 'discord-music-player';
 import { Client, IntentsBitField, TextChannel } from 'discord.js';
@@ -120,7 +120,7 @@ export function isFrennyDJBot(bot?: Bot): bot is FrennyDJBot {
  * @returns instance of FrennyDJBot
  */
 export function getFrennyDJBotInstance(): FrennyDJBot {
-	const instance = Frenny.bots.get(FrennyDJBot.name);
+	const instance = BotManager.bots.get(FrennyDJBot.name);
 
 	if (!isFrennyDJBot(instance))
 		throw new Error('No Instance of FrennyDJBot Found');

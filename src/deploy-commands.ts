@@ -1,6 +1,5 @@
-import FrennyAutomateBot from './bots/FrennyAutomateBot/FrennyAutomateBot.js';
-import FrennyDJBot from './bots/FrennyDJBot/FrennyDJBot.js';
-import Frenny from './core/Frenny.js';
+import FrennyBot from './bots/FrennyBot/FrennyBot.js';
+import BotManager from './core/bot/BotManager.js';
 
-Frenny.setBotsCollection([new FrennyAutomateBot(), new FrennyDJBot()]);
-Frenny.deployCommands();
+BotManager.setBotsCollection([new FrennyBot()]);
+await BotManager.deployCommands();

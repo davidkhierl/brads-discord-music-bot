@@ -1,10 +1,13 @@
 import SentryHelper from '../../helpers/SentryHelper.js';
+import Embeds, { EmbedContent } from '../components/Embeds.js';
 import BotCommandBuilder from './BotCommandBuilder.js';
-import { BotManagerError } from './BotManager.js';
-import Embeds, { EmbedContent } from './components/Embeds.js';
+import BotModule from './BotModule.js';
 import { REST } from '@discordjs/rest';
 import * as Sentry from '@sentry/node';
-import { RESTPostAPIApplicationCommandsJSONBody } from 'discord-api-types/v10';
+import {
+	RESTPostAPIApplicationCommandsJSONBody,
+	RESTPutAPIApplicationGuildCommandsResult,
+} from 'discord-api-types/v10';
 import {
 	ChatInputCommandInteraction,
 	Client,
@@ -12,9 +15,11 @@ import {
 	Collection,
 	Routes,
 } from 'discord.js';
+import fg from 'fast-glob';
 import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { Class } from 'type-fest';
 
 export interface BotEventModule {
 	name: keyof ClientEvents;
@@ -24,6 +29,10 @@ export interface BotEventModule {
 
 export interface BotEvent<T> extends BotEventModule {
 	execute: (args: T) => Promise<void>;
+}
+
+export interface CommandsDirOptions {
+	subDirectory?: string[];
 }
 
 export interface BotConstructor {
@@ -43,10 +52,10 @@ export default class Bot {
 	/**
 	 * Bot client
 	 */
-	public readonly client: Client<boolean>;
+	public readonly client: Client;
 
 	/**
-	 * App Id
+	 * App ID
 	 */
 	private readonly appId: string;
 
@@ -220,17 +229,20 @@ export default class Bot {
 				// finish sentry transaction
 				transaction.setStatus('ok');
 			} catch (error) {
-				// reply to user if its an user command error
+				// reply to user if it's a user command error
 				if (error instanceof UserCommandError) {
-					this.replyErrorMessage(interaction, {
+					await this.replyErrorMessage(interaction, {
 						deferReply: command.deferReply,
 						title: error.message,
+						description: error.description,
 					});
+
+					return;
 				}
 
 				if (error instanceof Error) {
 					// reply a generic error message to user
-					this.replyErrorMessage(interaction, {
+					await this.replyErrorMessage(interaction, {
 						deferReply: command.deferReply,
 					});
 					console.log(error);
@@ -248,26 +260,27 @@ export default class Bot {
 
 	/**
 	 * Read all commands from the bot commands directory
-	 * @returns Array of BotCommands instance
+	 * @param options CommandsDirOptions
+	 * @private Array of BotCommands instance
 	 */
-	private async getAllCommandsInstance() {
+	private async getAllCommandsInstance(options?: CommandsDirOptions) {
 		try {
-			const commandFiles = fs
-				.readdirSync(this.commandsDir)
-				.filter((file) => file.match(/(\.[tj]s$)/g));
+			const commandFiles = fg.sync('**/*.(t|j)s', {
+				absolute: true,
+				cwd: path.join(
+					this.commandsDir,
+					...(options?.subDirectory ?? '')
+				),
+			});
 
-			if (!commandFiles) return;
+			if (!commandFiles.length) return;
 
 			return Promise.all(
 				commandFiles.map(
 					(file) =>
 						new Promise<BotCommandBuilder>((resolve, reject) => {
 							(
-								import(
-									pathToFileURL(
-										path.join(this.commandsDir, file)
-									).href
-								) as Promise<{
+								import(pathToFileURL(file).href) as Promise<{
 									default: typeof BotCommandBuilder;
 								}>
 							)
@@ -290,26 +303,33 @@ export default class Bot {
 	/**
 	 * Set commands collections
 	 */
-	private async setCommandsCollection() {
-		const commands = await this.getAllCommandsInstance();
-
-		if (commands) {
-			for (const command of commands) {
-				this.commands.set(command.slash.name, command);
+	private setCommandsCollection() {
+		this.getAllCommandsInstance().then((commands) => {
+			if (commands?.length) {
+				for (const command of commands) {
+					this.commands.set(command.slash.name, command);
+				}
 			}
-		}
+		});
 	}
 
 	/**
 	 * Get all final commands ready to send to Discord
+	 * @param options CommandsDirOptions
 	 * @returns Returns the final data that should be sent to Discord.
 	 */
-	private async getAllCommandsToJSON(): Promise<
-		RESTPostAPIApplicationCommandsJSONBody[] | undefined
-	> {
-		const commands = await this.getAllCommandsInstance();
+	private async getAllCommandsToJSON(
+		options?: CommandsDirOptions
+	): Promise<RESTPostAPIApplicationCommandsJSONBody[] | undefined> {
+		const commands = await this.getAllCommandsInstance(options);
 
-		if (!commands) return;
+		if (!commands)
+			throw new BotError(
+				`No commands found: ${path.join(
+					this.commandsDir,
+					...(options?.subDirectory ?? '')
+				)}`
+			);
 
 		return commands.map((command) => command.slash.toJSON());
 	}
@@ -317,43 +337,75 @@ export default class Bot {
 	/**
 	 * Deploy the bot commands to a guild
 	 * @param guildId The guild id to deploy the commands to
+	 * @param options CommandsDirOptions
 	 */
-	public async deployCommandsToGuild(guildId: string) {
-		const commands = await this.getAllCommandsToJSON();
-
-		if (!commands) throw new BotManagerError('No Commands Found');
+	public async deployCommandsToGuild(
+		guildId: string,
+		options?: CommandsDirOptions
+	) {
+		const commands = await this.getAllCommandsToJSON(options);
 
 		return this.rest.put(
 			Routes.applicationGuildCommands(this.appId, guildId),
 			{
 				body: commands,
 			}
-		);
+		) as Promise<RESTPutAPIApplicationGuildCommandsResult>;
 	}
 
 	/**
 	 * Deploy the bot commands globally
 	 */
-	public async deployCommandsGlobally() {
-		const commands = await this.getAllCommandsToJSON();
-
-		if (!commands) throw new BotManagerError('No Commands Found');
+	public async deployCommandsGlobally(options?: CommandsDirOptions) {
+		const commands = await this.getAllCommandsToJSON(options);
 
 		return this.rest.put(Routes.applicationCommands(this.appId), {
 			body: commands,
 		});
 	}
-}
 
+	/**
+	 * Delete guild command
+	 * @param guildId Guild ID
+	 * @param commandId Command ID
+	 * @returns Promise<unknown>
+	 */
+	public async deleteGuildCommand(guildId: string, commandId: string) {
+		return this.rest.delete(
+			Routes.applicationGuildCommand(this.appId, guildId, commandId)
+		);
+	}
+
+	/**
+	 * Register a bot module
+	 * @param modules BotModule
+	 */
+	public registerModules(...modules: Class<BotModule, [Client]>[]) {
+		modules.forEach((module) => {
+			new module(this.client);
+		});
+	}
+}
 /**
  * Bot error
  */
 export class BotError extends Error {}
 
+export interface UserCommandErrorOptions {
+	description?: string;
+}
+
 /**
  * Error caused by user initiating commands
  */
-export class UserCommandError extends Error {}
+export class UserCommandError extends Error {
+	public description?: string;
+
+	constructor(message?: string, options?: UserCommandErrorOptions) {
+		super(message);
+		this.description = options?.description;
+	}
+}
 
 /**
  * Error related to a bot event
