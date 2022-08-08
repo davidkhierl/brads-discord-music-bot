@@ -38,8 +38,8 @@ const frennyBot = getFrennyBotInstance();
 
 frennyBot.registerModules(Music);
 
-// frennyBot.deployCommandsToGuild(process.env.DISCORD_DEVELOPMENT_GUILD_ID, {
-// 	subDirectory: ['music'],
-// });
+frennyBot.deployCommandsToGuild(process.env.DISCORD_DEVELOPMENT_GUILD_ID, {
+	subDirectory: ['music'],
+});
 
 botManager.start();

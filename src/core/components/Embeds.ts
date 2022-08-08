@@ -1,16 +1,11 @@
-import { ColorResolvable, EmbedBuilder } from 'discord.js';
+import { ColorResolvable, EmbedBuilder, EmbedData } from 'discord.js';
 
-export interface EmbedContent {
+export interface EmbedContent extends EmbedData {
 	title: string;
-	description?: string;
-	color?: ColorResolvable;
 }
 
 function EmbedMessage(content: EmbedContent) {
-	return new EmbedBuilder()
-		.setColor(content.color ?? null)
-		.setTitle(content.title)
-		.setDescription(content.description ?? null);
+	return new EmbedBuilder(content);
 }
 
 function InfoMessage(content: EmbedContent) {

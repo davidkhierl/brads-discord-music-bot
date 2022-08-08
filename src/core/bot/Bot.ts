@@ -6,6 +6,7 @@ import { REST } from '@discordjs/rest';
 import * as Sentry from '@sentry/node';
 import {
 	RESTPostAPIApplicationCommandsJSONBody,
+	RESTPostAPIApplicationGuildCommandsResult,
 	RESTPutAPIApplicationGuildCommandsResult,
 } from 'discord-api-types/v10';
 import {
@@ -84,6 +85,11 @@ export default class Bot {
 	 */
 	private readonly rest: REST;
 
+	/**
+	 * Bot module collection
+	 */
+	readonly modules: Collection<string, BotModule>;
+
 	constructor(props: BotConstructor) {
 		this.client = props.client;
 
@@ -100,6 +106,8 @@ export default class Bot {
 		this.rest = new REST({ version: '10' }).setToken(props.token);
 
 		this.token = props.token;
+
+		this.modules = new Collection();
 	}
 
 	/**
@@ -224,7 +232,7 @@ export default class Bot {
 					});
 
 				// execute command
-				await command.execute(interaction);
+				await command.execute(interaction, this);
 
 				// finish sentry transaction
 				transaction.setStatus('ok');
@@ -320,7 +328,7 @@ export default class Bot {
 	 */
 	private async getAllCommandsToJSON(
 		options?: CommandsDirOptions
-	): Promise<RESTPostAPIApplicationCommandsJSONBody[] | undefined> {
+	): Promise<RESTPostAPIApplicationCommandsJSONBody[]> {
 		const commands = await this.getAllCommandsInstance(options);
 
 		if (!commands)
@@ -345,12 +353,17 @@ export default class Bot {
 	) {
 		const commands = await this.getAllCommandsToJSON(options);
 
-		return this.rest.put(
-			Routes.applicationGuildCommands(this.appId, guildId),
-			{
-				body: commands,
-			}
-		) as Promise<RESTPutAPIApplicationGuildCommandsResult>;
+		return Promise.all(
+			commands.map(
+				(command) =>
+					this.rest.post(
+						Routes.applicationGuildCommands(this.appId, guildId),
+						{
+							body: command,
+						}
+					) as Promise<RESTPostAPIApplicationGuildCommandsResult>
+			)
+		);
 	}
 
 	/**
@@ -382,7 +395,10 @@ export default class Bot {
 	 */
 	public registerModules(...modules: Class<BotModule, [Client]>[]) {
 		modules.forEach((module) => {
-			new module(this.client);
+			this.modules.set(
+				module.name.toLowerCase(),
+				new module(this.client)
+			);
 		});
 	}
 }

@@ -1,4 +1,7 @@
+import Bot from '../../../../core/bot/Bot.js';
 import BotCommandBuilder from '../../../../core/bot/BotCommandBuilder.js';
+import Embeds from '../../../../core/components/Embeds.js';
+import { isMusic } from '../../../../core/modules/Music.js';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 export default class play extends BotCommandBuilder {
@@ -17,32 +20,32 @@ export default class play extends BotCommandBuilder {
 			);
 	}
 
-	async execute(interaction: ChatInputCommandInteraction): Promise<void> {
-		return;
-		// if (!interaction.isChatInputCommand()) return;
+	async execute(
+		interaction: ChatInputCommandInteraction,
+		bot: Bot
+	): Promise<void> {
+		const song = interaction.options.getString('song', true);
 
-		// const music = new Music(interaction, FrennyDJBot.player);
+		const music = bot.modules.get('music');
 
-		// await music.joinVoiceChannel();
+		if (!isMusic(music) || !interaction.guildId) return;
 
-		// await music.interaction.followUp({
-		// 	content: `⏱ | Loading track... **[${interaction.options.getString(
-		// 		'song'
-		// 	)}]**`,
-		// 	ephemeral: true,
-		// });
+		const { join, member, queue, guildQueue } = music.init(interaction);
 
-		// await music.queue
-		// 	.play(interaction.options.getString('song', true))
-		// 	.catch((error) => {
-		// 		if (!music.guildQueue) music.queue.stop();
-		// 		if (error instanceof Error)
-		// 			throw new Error(error.message, { cause: error.cause });
-		// 	});
+		await join();
 
-		// await music.interaction.followUp({
-		// 	content: '💿 | Track added to the queue, Enjoy your music! 🎧',
-		// });
-		// return;
+		interaction.editReply({
+			embeds: [
+				Embeds.InfoMessage({
+					title: `🔎 ${song}`,
+					description: 'Searching song...',
+				}),
+			],
+			content: '',
+		});
+
+		await queue.play(song, {
+			requestedBy: interaction.user,
+		});
 	}
 }
