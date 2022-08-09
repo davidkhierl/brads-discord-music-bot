@@ -8,11 +8,11 @@ export interface MusicInit {
 	/**
 	 * Player queue
 	 */
-	queue: Queue;
+	queue: Queue<PlayerData>;
 	/**
 	 * Guild queue
 	 */
-	guildQueue?: Queue;
+	guildQueue?: Queue<PlayerData>;
 	/**
 	 * Guild member
 	 */
@@ -23,6 +23,10 @@ export interface MusicInit {
 	join: () => Promise<void>;
 }
 
+export interface PlayerData {
+	interaction: ChatInputCommandInteraction;
+}
+
 /**
  * Music functionality for the bot
  */
@@ -30,9 +34,7 @@ export default class Music extends BotModule {
 	/**
 	 * Player instance
 	 */
-	public readonly player: Player<{
-		interaction: ChatInputCommandInteraction;
-	}>;
+	public readonly player: Player<PlayerData>;
 
 	constructor(client: Client) {
 		super(client);
@@ -46,7 +48,7 @@ export default class Music extends BotModule {
 	private registerPlayerEvents() {
 		this.player
 			.on('songFirst', (queue, song) => {
-				queue.data?.interaction.editReply({
+				song.data?.interaction.editReply({
 					embeds: [
 						MessageEmbeds.Info({
 							title: `${song.name}`,
@@ -62,10 +64,10 @@ export default class Music extends BotModule {
 					content: '',
 				});
 			})
-			.on('songAdd', (queue, song) => {
+			.on('songAdd', async (queue, song) => {
 				if (song.isFirst) return;
 
-				queue.data?.interaction.followUp({
+				song.data?.interaction.editReply({
 					embeds: [
 						MessageEmbeds.Info({
 							title: `${song.name}`,
@@ -80,7 +82,7 @@ export default class Music extends BotModule {
 				});
 			})
 			.on('songChanged', (queue, newSong) => {
-				queue.data?.interaction.followUp({
+				newSong.data?.interaction.followUp({
 					embeds: [
 						MessageEmbeds.Info({
 							title: `${newSong.name}`,
@@ -90,7 +92,7 @@ export default class Music extends BotModule {
 							footer: {
 								text: `Added by: ${
 									newSong.requestedBy?.id ===
-									queue.data.interaction.user.id
+									newSong.data?.interaction.user.id
 										? 'You'
 										: newSong.requestedBy?.username
 								}`,
@@ -102,6 +104,7 @@ export default class Music extends BotModule {
 						}),
 					],
 					content: '',
+					ephemeral: true,
 				});
 			})
 			.on('queueEnd', (queue) => {
@@ -128,7 +131,9 @@ export default class Music extends BotModule {
 			data: { interaction },
 		});
 
-		const guildQueue = this.player.getQueue(interaction.guildId);
+		const guildQueue = this.player.getQueue(interaction.guildId) as
+			| Queue<PlayerData>
+			| undefined;
 
 		const member = interaction.guild.members.cache.get(interaction.user.id);
 

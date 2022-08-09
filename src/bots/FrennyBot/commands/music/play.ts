@@ -32,24 +32,25 @@ export default class play extends BotCommandBuilder {
 
 		const { join, queue, guildQueue } = music.init(interaction);
 
+		queue.setData({ interaction });
+
 		await join();
 
-		console.log(guildQueue?.isPlaying);
-
-		if (!queue.isPlaying)
-			interaction.followUp({
-				embeds: [
-					MessageEmbeds.Info({
-						title: '🤔   Searching song...',
-						description: `${song}`,
-					}),
-				],
-				content: '',
-			});
+		interaction.editReply({
+			embeds: [
+				MessageEmbeds.Info({
+					title: `🤔   Searching song: **${song}**`,
+				}),
+			],
+			content: '',
+		});
 
 		await queue
 			.play(song, {
 				requestedBy: interaction.user,
+				data: {
+					interaction,
+				},
 			})
 			.catch((error) => {
 				if (!guildQueue) queue.stop();
