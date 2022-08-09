@@ -1,6 +1,6 @@
 import { UserCommandError } from '../../../../core/bot/Bot.js';
 import BotCommandBuilder from '../../../../core/bot/BotCommandBuilder.js';
-import Embeds from '../../../../core/components/Embeds.js';
+import MessageEmbeds from '../../../../core/components/MessageEmbeds.js';
 import prisma from '../../../../lib/prisma.js';
 import getGuildDefaultRoleId from '../../../../services/getGuildDefaultRoleId.js';
 import updateGuildDefaultRoleId from '../../../../services/updateGuildDefaultRoleId.js';
@@ -107,7 +107,7 @@ export default class setNewMembersRole extends BotCommandBuilder {
 
 				if (!selectMenuInteraction.guildId) {
 					selectMenuInteraction.editReply({
-						embeds: [Embeds.ErrorMessage()],
+						embeds: [MessageEmbeds.Error()],
 						content: '',
 						components: [],
 					});
@@ -126,7 +126,7 @@ export default class setNewMembersRole extends BotCommandBuilder {
 
 				if (selectMenuInteraction.values[0] === 'unset') {
 					await selectMenuInteraction.editReply({
-						embeds: [Embeds.SuccessMessage()],
+						embeds: [MessageEmbeds.Success()],
 						content: '',
 						components: [],
 					});
@@ -136,7 +136,7 @@ export default class setNewMembersRole extends BotCommandBuilder {
 
 				await selectMenuInteraction.editReply({
 					embeds: [
-						Embeds.InfoMessage({
+						MessageEmbeds.Info({
 							title: 'New members roles set!',
 							description:
 								'Do you want to apply this roles to all existing members?',
@@ -150,7 +150,7 @@ export default class setNewMembersRole extends BotCommandBuilder {
 				selectMenuCollector.stop();
 			} catch (error) {
 				selectMenuInteraction.editReply({
-					embeds: [Embeds.ErrorMessage()],
+					embeds: [MessageEmbeds.Error()],
 					content: '',
 					components: [],
 				});
@@ -193,7 +193,7 @@ export default class setNewMembersRole extends BotCommandBuilder {
 					}
 
 					buttonInteraction.update({
-						embeds: [Embeds.SuccessMessage()],
+						embeds: [MessageEmbeds.Success()],
 						content: '',
 						components: [],
 					});
@@ -206,7 +206,7 @@ export default class setNewMembersRole extends BotCommandBuilder {
 					'newMembersRoleApplyToExistingMembersDecline'
 				) {
 					buttonInteraction.update({
-						embeds: [Embeds.SuccessMessage()],
+						embeds: [MessageEmbeds.Success()],
 						content: '',
 						components: [],
 					});
@@ -217,7 +217,7 @@ export default class setNewMembersRole extends BotCommandBuilder {
 				if (error instanceof DiscordAPIError && error.code === 50013) {
 					buttonInteraction.update({
 						embeds: [
-							Embeds.ErrorMessage({
+							MessageEmbeds.Error({
 								title: "I can't give one fo the role you selected",
 								description:
 									'Please fix it by putting my role **Frenny** above all the roles you selected',
@@ -236,7 +236,7 @@ export default class setNewMembersRole extends BotCommandBuilder {
 				buttonCollector.stop();
 
 				buttonInteraction.update({
-					embeds: [Embeds.ErrorMessage()],
+					embeds: [MessageEmbeds.Error()],
 					content: '',
 					components: [],
 				});

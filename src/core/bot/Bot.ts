@@ -1,5 +1,8 @@
 import SentryHelper from '../../helpers/SentryHelper.js';
-import Embeds, { EmbedContent } from '../components/Embeds.js';
+import MessageEmbeds, {
+	EmbedContent,
+	MESSAGE_EMBED_COLORS,
+} from '../components/MessageEmbeds.js';
 import BotCommandBuilder from './BotCommandBuilder.js';
 import BotModule from './BotModule.js';
 import { REST } from '@discordjs/rest';
@@ -133,13 +136,13 @@ export default class Bot {
 		if (options?.deferReply)
 			await interaction.followUp({
 				ephemeral: true,
-				embeds: [Embeds.ErrorMessage({ ...options })],
+				embeds: [MessageEmbeds.Error({ ...options })],
 				content: '',
 			});
 		else
 			await interaction.reply({
 				ephemeral: true,
-				embeds: [Embeds.ErrorMessage({ ...options })],
+				embeds: [MessageEmbeds.Error({ ...options })],
 				content: '',
 			});
 	}
@@ -243,6 +246,7 @@ export default class Bot {
 						deferReply: command.deferReply,
 						title: error.message,
 						description: error.description,
+						color: MESSAGE_EMBED_COLORS.warning,
 					});
 
 					return;
@@ -409,6 +413,7 @@ export class BotError extends Error {}
 
 export interface UserCommandErrorOptions {
 	description?: string;
+	color?: number;
 }
 
 /**
@@ -416,10 +421,11 @@ export interface UserCommandErrorOptions {
  */
 export class UserCommandError extends Error {
 	public description?: string;
-
+	public color?: number;
 	constructor(message?: string, options?: UserCommandErrorOptions) {
 		super(message);
 		this.description = options?.description;
+		this.color = options?.color;
 	}
 }
 

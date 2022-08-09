@@ -1,8 +1,27 @@
 import { UserCommandError } from '../bot/Bot.js';
 import BotModule from '../bot/BotModule.js';
-import Embeds from '../components/Embeds.js';
+import MessageEmbeds from '../components/MessageEmbeds.js';
 import { Player, Queue } from 'discord-music-player';
 import { ChatInputCommandInteraction, Client, GuildMember } from 'discord.js';
+
+export interface MusicInit {
+	/**
+	 * Player queue
+	 */
+	queue: Queue;
+	/**
+	 * Guild queue
+	 */
+	guildQueue?: Queue;
+	/**
+	 * Guild member
+	 */
+	member: GuildMember;
+	/**
+	 * Join the voice channel
+	 */
+	join: () => Promise<void>;
+}
 
 /**
  * Music functionality for the bot
@@ -11,17 +30,9 @@ export default class Music extends BotModule {
 	/**
 	 * Player instance
 	 */
-	public readonly player: Player<ChatInputCommandInteraction>;
-
-	/**
-	 * Player queue
-	 */
-	private queue?: Queue;
-
-	/**
-	 * Player queue
-	 */
-	private guildQueue?: Queue;
+	public readonly player: Player<{
+		interaction: ChatInputCommandInteraction;
+	}>;
 
 	constructor(client: Client) {
 		super(client);
@@ -33,37 +44,88 @@ export default class Music extends BotModule {
 	 * Register all Player events
 	 */
 	private registerPlayerEvents() {
-		this.player.on('songFirst', (queue, song) => {
-			queue.data?.editReply({
-				embeds: [
-					Embeds.InfoMessage({
-						title: `${song.name}`,
-						thumbnail: { url: song.thumbnail },
-						author: { name: 'Now playing' },
-						url: song.url,
-						footer: {
-							text: `${song.author}`,
-						},
-						color: 0xf700ce,
-					}),
-				],
-				content: '',
+		this.player
+			.on('songFirst', (queue, song) => {
+				queue.data?.interaction.editReply({
+					embeds: [
+						MessageEmbeds.Info({
+							title: `${song.name}`,
+							thumbnail: { url: song.thumbnail },
+							author: { name: 'Now playing' },
+							url: song.url,
+							footer: {
+								text: `${song.author}`,
+							},
+							color: 0xf700ce,
+						}),
+					],
+					content: '',
+				});
+			})
+			.on('songAdd', (queue, song) => {
+				if (song.isFirst) return;
+
+				queue.data?.interaction.followUp({
+					embeds: [
+						MessageEmbeds.Info({
+							title: `${song.name}`,
+							thumbnail: { url: song.thumbnail },
+							author: { name: 'Song added to the queue' },
+							url: song.url,
+							footer: {
+								text: `${song.author}`,
+							},
+						}),
+					],
+				});
+			})
+			.on('songChanged', (queue, newSong) => {
+				queue.data?.interaction.followUp({
+					embeds: [
+						MessageEmbeds.Info({
+							title: `${newSong.name}`,
+							thumbnail: { url: newSong.thumbnail },
+							author: { name: 'Now playing' },
+							url: newSong.url,
+							footer: {
+								text: `Added by: ${
+									newSong.requestedBy?.id ===
+									queue.data.interaction.user.id
+										? 'You'
+										: newSong.requestedBy?.username
+								}`,
+								iconURL: newSong.requestedBy?.displayAvatarURL({
+									size: 16,
+								}),
+							},
+							color: 0xf700ce,
+						}),
+					],
+					content: '',
+				});
+			})
+			.on('queueEnd', (queue) => {
+				queue.data?.interaction.followUp({
+					embeds: [
+						MessageEmbeds.Success({
+							title: 'Songs queue ended',
+						}),
+					],
+				});
 			});
-		});
 	}
 
-	public init(interaction: ChatInputCommandInteraction) {
+	/**
+	 * Initialize the player
+	 * @param interaction ChatInputCommandInteraction
+	 * @returns The player object
+	 */
+	public init(interaction: ChatInputCommandInteraction): MusicInit {
 		if (!interaction.guildId || !interaction.guild)
 			throw new MusicError('Cannot initialize without a guild');
 
-		// if (!this.queue) {
-		// 	this.queue = this.player.createQueue(interaction.guildId, {
-		// 		data: interaction,
-		// 	});
-		// }
-
 		const queue = this.player.createQueue(interaction.guildId, {
-			data: interaction,
+			data: { interaction },
 		});
 
 		const guildQueue = this.player.getQueue(interaction.guildId);
@@ -79,13 +141,18 @@ export default class Music extends BotModule {
 			queue,
 			guildQueue,
 			member,
-			join: () => this.joinVoiceChannel(member, queue),
+			join: async () => await this.joinVoiceChannel(member, queue),
 		};
 	}
 
+	/**
+	 * Join the voice channel
+	 * @param member guild member invoke the command
+	 * @param queue player queue
+	 */
 	private async joinVoiceChannel(member: GuildMember, queue: Queue) {
 		if (!member.voice.channel)
-			throw new UserCommandError('🥱 Failed to join voice channel', {
+			throw new UserCommandError('🙄   Failed to join voice channel', {
 				description: 'Make sure you are already in a voice channel',
 			});
 
