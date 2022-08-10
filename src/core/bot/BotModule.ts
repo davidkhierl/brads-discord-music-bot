@@ -7,9 +7,9 @@ export default class BotModule {
 	/**
 	 * Bot client
 	 */
-	public readonly client: Client;
+	public readonly client: Client<true>;
 
-	constructor(client: Client) {
+	constructor(client: Client<true>) {
 		this.client = client;
 	}
 }

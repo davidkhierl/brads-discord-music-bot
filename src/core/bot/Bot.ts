@@ -40,7 +40,7 @@ export interface CommandsDirOptions {
 }
 
 export interface BotConstructor {
-	client: Client;
+	client: Client<true>;
 	commandsDir: string;
 	eventsDir?: string;
 	token: string;
@@ -56,7 +56,7 @@ export default class Bot {
 	/**
 	 * Bot client
 	 */
-	public readonly client: Client;
+	public readonly client: Client<true>;
 
 	/**
 	 * App ID
@@ -397,7 +397,7 @@ export default class Bot {
 	 * Register a bot module
 	 * @param modules BotModule
 	 */
-	public registerModules(...modules: Class<BotModule, [Client]>[]) {
+	public registerModules(...modules: Class<BotModule, [Client<true>]>[]) {
 		modules.forEach((module) => {
 			this.modules.set(
 				module.name.toLowerCase(),

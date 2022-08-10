@@ -39,7 +39,7 @@ export default class play extends BotCommandBuilder {
 		interaction.editReply({
 			embeds: [
 				MessageEmbeds.Info({
-					title: `🤔   Searching song: **${song}**`,
+					title: `🤔   Searching song: __${song}__`,
 				}),
 			],
 			content: '',
@@ -48,9 +48,6 @@ export default class play extends BotCommandBuilder {
 		await queue
 			.play(song, {
 				requestedBy: interaction.user,
-				data: {
-					interaction,
-				},
 			})
 			.catch((error) => {
 				if (!guildQueue) queue.stop();

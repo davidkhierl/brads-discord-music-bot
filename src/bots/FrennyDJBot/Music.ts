@@ -15,7 +15,7 @@ export default class Music {
 	/**
 	 * Bot client instance
 	 */
-	private readonly client: Client<boolean>;
+	private readonly client: Client<true>;
 
 	/**
 	 * Interaction command

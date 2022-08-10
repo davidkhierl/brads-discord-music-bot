@@ -6,7 +6,7 @@ import { ChatInputCommandInteraction } from 'discord.js';
 
 export default class stop extends BotCommandBuilder {
 	constructor() {
-		super({ deferReply: true, ephemeral: true });
+		super({ deferReply: false, ephemeral: false });
 		this.slash.setName('stop').setDescription('Stop playing music');
 	}
 
@@ -20,8 +20,10 @@ export default class stop extends BotCommandBuilder {
 
 		const { join, queue, guildQueue } = music.init(interaction);
 
-		if (!queue.isPlaying)
-			interaction.followUp({
+		queue.setData({ interaction });
+
+		if (!queue.isPlaying) {
+			interaction.reply({
 				embeds: [
 					MessageEmbeds.Warning({
 						title: '🙄 Yow! there are no songs playing',
@@ -30,10 +32,9 @@ export default class stop extends BotCommandBuilder {
 				content: '',
 			});
 
-		queue.stop();
+			return;
+		}
 
-		interaction.followUp({
-			embeds: [MessageEmbeds.Success({ title: '🥳   Music stopped!' })],
-		});
+		queue.stop();
 	}
 }

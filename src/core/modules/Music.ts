@@ -2,7 +2,15 @@ import { UserCommandError } from '../bot/Bot.js';
 import BotModule from '../bot/BotModule.js';
 import MessageEmbeds from '../components/MessageEmbeds.js';
 import { Player, Queue } from 'discord-music-player';
-import { ChatInputCommandInteraction, Client, GuildMember } from 'discord.js';
+import {
+	Channel,
+	ChatInputCommandInteraction,
+	Client,
+	GuildMember,
+	Message,
+	MessageResolvable,
+	TextBasedChannel,
+} from 'discord.js';
 
 export interface MusicInit {
 	/**
@@ -35,8 +43,7 @@ export default class Music extends BotModule {
 	 * Player instance
 	 */
 	public readonly player: Player<PlayerData>;
-
-	constructor(client: Client) {
+	constructor(client: Client<true>) {
 		super(client);
 		this.player = new Player(this.client);
 		this.registerPlayerEvents();
@@ -48,15 +55,20 @@ export default class Music extends BotModule {
 	private registerPlayerEvents() {
 		this.player
 			.on('songFirst', (queue, song) => {
-				song.data?.interaction.editReply({
+				queue.data?.interaction.channel?.send({
 					embeds: [
 						MessageEmbeds.Info({
 							title: `${song.name}`,
 							thumbnail: { url: song.thumbnail },
-							author: { name: 'Now playing' },
+							author: {
+								name: 'Now playing',
+							},
 							url: song.url,
 							footer: {
-								text: `${song.author}`,
+								text: `Added by:   ${song.requestedBy?.username}\nPlaying in:   ${queue.connection?.channel.name}`,
+								iconURL: song.requestedBy?.displayAvatarURL({
+									size: 16,
+								}),
 							},
 							color: 0xf700ce,
 						}),
@@ -65,9 +77,18 @@ export default class Music extends BotModule {
 				});
 			})
 			.on('songAdd', async (queue, song) => {
-				if (song.isFirst) return;
+				if (song.isFirst) {
+					queue.data?.interaction.editReply({
+						embeds: [
+							MessageEmbeds.Info({
+								title: '🎧   Playing Music, Enjoy!',
+							}),
+						],
+					});
+					return;
+				}
 
-				song.data?.interaction.editReply({
+				queue.data?.interaction.editReply({
 					embeds: [
 						MessageEmbeds.Info({
 							title: `${song.name}`,
@@ -82,7 +103,7 @@ export default class Music extends BotModule {
 				});
 			})
 			.on('songChanged', (queue, newSong) => {
-				newSong.data?.interaction.followUp({
+				queue.data?.interaction.channel?.send({
 					embeds: [
 						MessageEmbeds.Info({
 							title: `${newSong.name}`,
@@ -90,12 +111,7 @@ export default class Music extends BotModule {
 							author: { name: 'Now playing' },
 							url: newSong.url,
 							footer: {
-								text: `Added by: ${
-									newSong.requestedBy?.id ===
-									newSong.data?.interaction.user.id
-										? 'You'
-										: newSong.requestedBy?.username
-								}`,
+								text: `Added by:   ${newSong.requestedBy?.username}\nPlaying in:   ${queue.connection?.channel.name}`,
 								iconURL: newSong.requestedBy?.displayAvatarURL({
 									size: 16,
 								}),
@@ -104,17 +120,49 @@ export default class Music extends BotModule {
 						}),
 					],
 					content: '',
-					ephemeral: true,
 				});
 			})
-			.on('queueEnd', (queue) => {
-				queue.data?.interaction.followUp({
+			.on('queueEnd', async (queue) => {
+				const endReply = await queue.data?.interaction.channel?.send({
 					embeds: [
 						MessageEmbeds.Success({
-							title: 'Songs queue ended',
+							title: '🥳   Finished playing music, hope you had fun!',
+							description:
+								'🧹   clearing messages after 10 seconds',
 						}),
 					],
 				});
+
+				await this._deletePlayerMessages(
+					queue.data?.interaction.channel,
+					{ message: endReply }
+				);
+			})
+			.on('queueDestroyed', async (queue) => {
+				queue.data?.interaction.reply({
+					embeds: [
+						MessageEmbeds.Warning({
+							title: '🙌   Music stopped',
+							description:
+								'🧹   clearing messages after 10 seconds',
+							footer: {
+								text: `${queue.data?.interaction.user.username}`,
+								iconURL:
+									queue.data?.interaction.user.displayAvatarURL(
+										{
+											size: 16,
+										}
+									),
+							},
+						}),
+					],
+					ephemeral: false,
+				});
+
+				await this._deletePlayerMessages(
+					queue.data?.interaction.channel,
+					{ interaction: queue.data?.interaction }
+				);
 			});
 	}
 
@@ -146,7 +194,7 @@ export default class Music extends BotModule {
 			queue,
 			guildQueue,
 			member,
-			join: async () => await this.joinVoiceChannel(member, queue),
+			join: async () => await this._joinVoiceChannel(member, queue),
 		};
 	}
 
@@ -155,13 +203,46 @@ export default class Music extends BotModule {
 	 * @param member guild member invoke the command
 	 * @param queue player queue
 	 */
-	private async joinVoiceChannel(member: GuildMember, queue: Queue) {
+	private async _joinVoiceChannel(member: GuildMember, queue: Queue) {
 		if (!member.voice.channel)
 			throw new UserCommandError('🙄   Failed to join voice channel', {
 				description: 'Make sure you are already in a voice channel',
 			});
 
 		await queue.join(member.voice.channel);
+	}
+
+	/**
+	 * Delete player messages
+	 * @param channel Channel
+	 * @param options Interaction or Message
+	 * @returns Promise<void>
+	 */
+	private async _deletePlayerMessages(
+		channel: TextBasedChannel | null | undefined,
+		options: {
+			message?: Message;
+			interaction?: ChatInputCommandInteraction;
+		}
+	) {
+		if (options.interaction && options.message)
+			throw new MusicError('Supply only one option');
+
+		if (!channel?.isTextBased() || channel.isDMBased()) return;
+
+		const messages = await channel.messages.fetch({
+			before: options.message?.id ?? options.interaction?.id,
+		});
+
+		setTimeout(() => {
+			channel.bulkDelete(
+				messages.filter(
+					(message) => message.member?.id === this.client.user.id
+				)
+			);
+			if (options.message) options.message.delete();
+			if (options.interaction) options.interaction.deleteReply();
+		}, 10000);
 	}
 }
 

@@ -1,12 +1,7 @@
 import { SENTRY_BOT_TAG, SENTRY_BOT_TRANSACTION } from '../utils/enums.js';
 import * as Sentry from '@sentry/node';
 import { Transaction, TransactionContext } from '@sentry/types';
-import {
-	ChatInputCommandInteraction,
-	Client,
-	ClientEvents,
-	CommandInteraction,
-} from 'discord.js';
+import { ClientEvents } from 'discord.js';
 
 export interface BotTransactionContext
 	extends Omit<TransactionContext, 'name'> {
