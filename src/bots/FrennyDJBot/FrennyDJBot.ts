@@ -31,8 +31,8 @@ export default class FrennyDJBot extends Bot {
 			}),
 			commandsDir: dirResolver(import.meta.url, 'commands'),
 			eventsDir: dirResolver(import.meta.url, 'events'),
-			token: process.env.DISCORD_FRENNY_DJ_BOT_TOKEN,
-			appId: process.env.DISCORD_FRENNY_DJ_APP_ID,
+			token: '',
+			appId: '',
 		});
 
 		this.name = FrennyDJBot.name;

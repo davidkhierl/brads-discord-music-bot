@@ -3,12 +3,10 @@ import BotModule from '../bot/BotModule.js';
 import MessageEmbeds from '../components/MessageEmbeds.js';
 import { Player, Queue } from 'discord-music-player';
 import {
-	Channel,
 	ChatInputCommandInteraction,
 	Client,
 	GuildMember,
 	Message,
-	MessageResolvable,
 	TextBasedChannel,
 } from 'discord.js';
 
@@ -76,9 +74,9 @@ export default class Music extends BotModule {
 					content: '',
 				});
 			})
-			.on('songAdd', async (queue, song) => {
+			.on('songAdd', async (_queue, song) => {
 				if (song.isFirst) {
-					queue.data?.interaction.editReply({
+					song.data?.interaction.editReply({
 						embeds: [
 							MessageEmbeds.Info({
 								title: '🎧   Playing Music, Enjoy!',
@@ -88,7 +86,7 @@ export default class Music extends BotModule {
 					return;
 				}
 
-				queue.data?.interaction.editReply({
+				song.data?.interaction.editReply({
 					embeds: [
 						MessageEmbeds.Info({
 							title: `${song.name}`,
@@ -97,6 +95,27 @@ export default class Music extends BotModule {
 							url: song.url,
 							footer: {
 								text: `${song.author}`,
+							},
+						}),
+					],
+				});
+			})
+			.on('playlistAdd', (_queue, playlist) => {
+				playlist.songs[0].data?.interaction.editReply({
+					embeds: [
+						MessageEmbeds.Info({
+							title: `${playlist}`,
+							thumbnail: { url: playlist.songs[0].thumbnail },
+							url: playlist.songs[0].data.playlistUrl,
+							fields: [
+								{
+									name: 'Number of songs',
+									value: `**${playlist.songs.length}**`,
+									inline: true,
+								},
+							],
+							author: {
+								name: '🎧   Playing Music, Enjoy!',
 							},
 						}),
 					],
@@ -126,9 +145,9 @@ export default class Music extends BotModule {
 				const endReply = await queue.data?.interaction.channel?.send({
 					embeds: [
 						MessageEmbeds.Success({
-							title: '🥳   Finished playing music, hope you had fun!',
+							title: '🥳   Finished playing music, hope you enjoyed your music!',
 							description:
-								'🧹   clearing messages after 10 seconds',
+								'🧹   clearing player messages after 30 seconds',
 						}),
 					],
 				});
@@ -144,7 +163,7 @@ export default class Music extends BotModule {
 						MessageEmbeds.Warning({
 							title: '🙌   Music stopped',
 							description:
-								'🧹   clearing messages after 10 seconds',
+								'🧹   clearing player messages after 30 seconds',
 							footer: {
 								text: `${queue.data?.interaction.user.username}`,
 								iconURL:
@@ -163,6 +182,15 @@ export default class Music extends BotModule {
 					queue.data?.interaction.channel,
 					{ interaction: queue.data?.interaction }
 				);
+			})
+			.on('error', (error, queue) => {
+				console.log(error);
+
+				if (queue) queue.stop();
+
+				queue.data?.interaction.followUp({
+					embeds: [MessageEmbeds.Error()],
+				});
 			});
 	}
 
@@ -242,7 +270,7 @@ export default class Music extends BotModule {
 			);
 			if (options.message) options.message.delete();
 			if (options.interaction) options.interaction.deleteReply();
-		}, 10000);
+		}, 30000);
 	}
 }
 

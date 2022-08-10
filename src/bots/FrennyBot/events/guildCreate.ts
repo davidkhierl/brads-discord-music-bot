@@ -4,7 +4,6 @@ import saveGuild from '../../../services/saveGuild.js';
 import saveGuildCommands from '../../../services/saveGuildCommands.js';
 import saveGuildRoles from '../../../services/saveGuildRoles.js';
 import { getFrennyBotInstance } from '../FrennyBot.js';
-import { Command } from '@prisma/client';
 import * as Sentry from '@sentry/node';
 import { Guild } from 'discord.js';
 
@@ -40,16 +39,33 @@ const guildCreate: BotEvent<Guild> = {
 
 			const frenny = getFrennyBotInstance();
 
-			const commands = await frenny.deployCommandsToGuild(guild.id, {
-				subDirectory: ['welcome'],
-			});
+			const welcomeCommands = await frenny.deployCommandsToGuild(
+				guild.id,
+				{
+					subDirectory: ['welcome'],
+				}
+			);
 
 			await saveGuildCommands(
-				commands.map((command) => ({
+				welcomeCommands.map((command) => ({
 					id: command.id,
 					name: command.name,
 					description: command.description,
 					group: 'welcome',
+					guildId: guild.id,
+				}))
+			);
+
+			const musicCommands = await frenny.deployCommandsToGuild(guild.id, {
+				subDirectory: ['music'],
+			});
+
+			await saveGuildCommands(
+				musicCommands.map((command) => ({
+					id: command.id,
+					name: command.name,
+					description: command.description,
+					group: 'music',
 					guildId: guild.id,
 				}))
 			);

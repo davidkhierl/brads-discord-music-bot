@@ -13,13 +13,13 @@ import * as Tracing from '@sentry/tracing';
  */
 const releaseName = await getSentryReleaseName();
 
-// console.log('Initializing Sentry');
+console.log('Initializing Sentry');
 
-// console.log('[Sentry Release]:', releaseName);
+console.log('[Sentry Release]:', releaseName);
 
 Sentry.init({
 	environment: process.env.NODE_ENV ?? 'development',
-	// dsn: process.env.SENTRY_DSN,
+	dsn: process.env.SENTRY_DSN,
 	release: releaseName,
 	tracesSampleRate: 1.0,
 	serverName: process.env.SERVER_NAME,
@@ -37,9 +37,5 @@ export const botManager = BotManager.create(new FrennyBot());
 const frennyBot = getFrennyBotInstance();
 
 frennyBot.registerModules(Music);
-
-// frennyBot.deployCommandsToGuild(process.env.DISCORD_DEVELOPMENT_GUILD_ID, {
-// 	subDirectory: ['music'],
-// });
 
 botManager.start();

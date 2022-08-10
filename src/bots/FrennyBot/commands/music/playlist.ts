@@ -4,17 +4,19 @@ import MessageEmbeds from '../../../../core/components/MessageEmbeds.js';
 import { isMusic } from '../../../../core/modules/Music.js';
 import { ChatInputCommandInteraction } from 'discord.js';
 
-export default class play extends BotCommandBuilder {
+export default class playlist extends BotCommandBuilder {
 	constructor() {
 		super({ deferReply: true, ephemeral: true });
 		this.slash
-			.setName('play')
-			.setDescription('Play a song from YouTube, Spotify or Apple Music')
+			.setName('playlist')
+			.setDescription(
+				'Play a playlist from YouTube, Spotify or Apple Music'
+			)
 			.addStringOption((option) =>
 				option
-					.setName('song')
+					.setName('url')
 					.setDescription(
-						'Name of the song or a you can paste the url from YouTube, Spotify or Apple Music.'
+						'Url playlist from YouTube, Spotify or Apple Music'
 					)
 					.setRequired(true)
 			);
@@ -24,7 +26,7 @@ export default class play extends BotCommandBuilder {
 		interaction: ChatInputCommandInteraction,
 		bot: Bot
 	): Promise<void> {
-		const song = interaction.options.getString('song', true);
+		const playlistUrl = interaction.options.getString('url', true);
 
 		const music = bot.modules.get('music');
 
@@ -39,17 +41,23 @@ export default class play extends BotCommandBuilder {
 		interaction.editReply({
 			embeds: [
 				MessageEmbeds.Info({
-					title: `🤔   Searching song: __${song}__`,
+					title: '',
+					description: `${playlistUrl}`,
+					url: playlistUrl,
+					author: {
+						name: '🤔   Searching playlist',
+					},
 				}),
 			],
 			content: '',
 		});
 
 		await queue
-			.play(song, {
+			.playlist(playlistUrl, {
 				requestedBy: interaction.user,
 				data: {
 					interaction,
+					playlistUrl,
 				},
 			})
 			.catch((error) => {

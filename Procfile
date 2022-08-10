@@ -1,2 +1,2 @@
-release: yarn prisma db push && yarn deploy-commands
+release: yarn prisma db push
 worker: yarn start
