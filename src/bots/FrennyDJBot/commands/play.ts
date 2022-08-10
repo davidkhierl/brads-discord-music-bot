@@ -1,4 +1,4 @@
-import BotCommandBuilder from '../../../core/BotCommandBuilder.js';
+import BotCommandBuilder from '../../../core/bot/BotCommandBuilder.js';
 import FrennyDJBot from '../FrennyDJBot.js';
 import Music from '../Music.js';
 import { CommandInteraction } from 'discord.js';

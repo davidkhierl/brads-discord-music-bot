@@ -1,5 +1,5 @@
-import { UserCommandError } from '../../../core/Bot.js';
-import BotCommandBuilder from '../../../core/BotCommandBuilder.js';
+import { UserCommandError } from '../../../core/bot/Bot.js';
+import BotCommandBuilder from '../../../core/bot/BotCommandBuilder.js';
 import FrennyDJBot from '../FrennyDJBot.js';
 import Music from '../Music.js';
 import { CommandInteraction } from 'discord.js';
