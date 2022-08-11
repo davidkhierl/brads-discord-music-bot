@@ -183,13 +183,13 @@ export default class Music extends BotModule {
 				);
 			})
 			.on('error', (error, queue) => {
-				console.log(error);
+				console.log('error', error);
 
 				if (queue) queue.stop();
 
-				queue.data?.interaction.followUp({
-					embeds: [MessageEmbeds.Error()],
-				});
+				// queue.data?.interaction.followUp({
+				// 	embeds: [MessageEmbeds.Error()],
+				// });
 			});
 	}
 
