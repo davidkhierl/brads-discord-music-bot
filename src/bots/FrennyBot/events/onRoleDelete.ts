@@ -29,7 +29,7 @@ const onRoleDelete: BotEvent<Role> = {
 			// ignore managed role
 			if (role.managed) {
 				transaction.setStatus('cancelled');
-				transaction.finish();
+				SentryHelper.finishTransaction(transaction);
 				return;
 			}
 
@@ -45,7 +45,7 @@ const onRoleDelete: BotEvent<Role> = {
 			Sentry.captureException(error);
 		}
 
-		transaction.finish();
+		SentryHelper.finishTransaction(transaction);
 	},
 };
 
