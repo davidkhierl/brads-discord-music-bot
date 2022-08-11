@@ -10,7 +10,6 @@ import * as Sentry from '@sentry/node';
 import {
 	RESTPostAPIApplicationCommandsJSONBody,
 	RESTPostAPIApplicationGuildCommandsResult,
-	RESTPutAPIApplicationGuildCommandsResult,
 } from 'discord-api-types/v10';
 import {
 	ChatInputCommandInteraction,
@@ -119,9 +118,11 @@ export default class Bot {
 	public start() {
 		this.client.login(this.token);
 
-		this.initializeEvents();
+		this._initializeEvents().then(() =>
+			console.log(`${this.name} event initialize`)
+		);
 
-		this.listenOnCommandChatInput();
+		this._listenOnCommandChatInput();
 	}
 
 	/**
@@ -129,7 +130,7 @@ export default class Bot {
 	 * @param interaction ChatInputCommandInteraction
 	 * @param options Reply options
 	 */
-	private async replyErrorMessage(
+	private async _replyErrorMessage(
 		interaction: ChatInputCommandInteraction,
 		options?: { deferReply?: boolean } & Partial<EmbedContent>
 	) {
@@ -151,7 +152,7 @@ export default class Bot {
 	 * Load all events from bot events directory
 	 * @returns void
 	 */
-	private async initializeEvents() {
+	private async _initializeEvents() {
 		if (!this.eventsDir) return;
 
 		// read event files
@@ -203,7 +204,7 @@ export default class Bot {
 	/**
 	 * Listen to all command interaction
 	 */
-	private listenOnCommandChatInput() {
+	private _listenOnCommandChatInput() {
 		this.client.on('interactionCreate', async (interaction) => {
 			if (!interaction.isChatInputCommand()) return;
 
@@ -242,7 +243,7 @@ export default class Bot {
 			} catch (error) {
 				// reply to user if it's a user command error
 				if (error instanceof UserCommandError) {
-					await this.replyErrorMessage(interaction, {
+					await this._replyErrorMessage(interaction, {
 						deferReply: command.deferReply,
 						title: error.message,
 						description: error.description,
@@ -254,7 +255,7 @@ export default class Bot {
 
 				if (error instanceof Error) {
 					// reply a generic error message to user
-					await this.replyErrorMessage(interaction, {
+					await this._replyErrorMessage(interaction, {
 						deferReply: command.deferReply,
 					});
 					console.log(error);
