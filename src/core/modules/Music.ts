@@ -189,7 +189,7 @@ export default class Music extends BotModule {
 				);
 			})
 			.on('error', (error, queue) => {
-				console.log('Player Error: ', error);
+				console.log(error);
 
 				if (queue) queue.stop();
 
