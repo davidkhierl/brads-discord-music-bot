@@ -72,13 +72,4 @@ export default class SentryHelper {
 
 		return transaction;
 	}
-
-	/**
-	 * Finish the transaction and clears the scope
-	 * @param transaction Transaction
-	 */
-	public static finishTransaction(transaction: Transaction) {
-		transaction.finish();
-		Sentry.configureScope((scope) => scope.clear());
-	}
 }

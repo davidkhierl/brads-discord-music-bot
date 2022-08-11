@@ -45,7 +45,7 @@ const guildCreate: BotEvent<Guild> = {
 			Sentry.captureException(error);
 		}
 
-		SentryHelper.finishTransaction(transaction);
+		transaction.finish();
 	},
 };
 

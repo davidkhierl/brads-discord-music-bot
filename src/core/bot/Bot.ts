@@ -266,7 +266,7 @@ export default class Bot {
 				Sentry.captureException(error);
 			}
 
-			SentryHelper.finishTransaction(transaction);
+			transaction.finish();
 		});
 	}
 
