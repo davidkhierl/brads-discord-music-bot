@@ -158,7 +158,13 @@ export default class Music extends BotModule {
 				);
 			})
 			.on('queueDestroyed', async (queue) => {
-				queue.data?.interaction.channel?.send({
+				await queue.data?.interaction.followUp({
+					embeds: [
+						MessageEmbeds.Warning({ title: 'Stopping music' }),
+					],
+				});
+
+				const endReply = await queue.data?.interaction.channel?.send({
 					embeds: [
 						MessageEmbeds.Warning({
 							title: '🙌   Music stopped',
@@ -179,11 +185,11 @@ export default class Music extends BotModule {
 
 				await this._deletePlayerMessages(
 					queue.data?.interaction.channel,
-					{ interaction: queue.data?.interaction }
+					{ message: endReply }
 				);
 			})
 			.on('error', (error, queue) => {
-				console.log('error', error);
+				console.log('Player Error: ', error);
 
 				if (queue) queue.stop();
 

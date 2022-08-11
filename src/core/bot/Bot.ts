@@ -116,10 +116,12 @@ export default class Bot {
 	 * Start the bot
 	 */
 	public start() {
-		this.client.login(this.token);
+		this.client
+			.login(this.token)
+			.then(() => console.log(`${this.name} logged in`));
 
 		this._initializeEvents().then(() =>
-			console.log(`${this.name} event initialize`)
+			console.log(`${this.name} event initialized`)
 		);
 
 		this._listenOnCommandChatInput();
