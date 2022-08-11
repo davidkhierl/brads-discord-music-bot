@@ -26,13 +26,12 @@ export default class skip extends BotCommandBuilder {
 		const music = bot.modules.get('music');
 		if (!isMusic(music) || !interaction.guildId) return;
 
-		const { join, queue, guildQueue } = music.init(interaction);
+		const { queue, guildQueue } = music.init(interaction);
 
 		const queueCount = guildQueue?.songs.length;
 
 		if (!queue.isPlaying || !queueCount)
 			throw new UserCommandError('🙄   Yow! there are no songs playing');
-		queue.setData({ interaction });
 
 		const currentTrack = guildQueue?.songs[0];
 		const optionIndex = interaction.options.getInteger('index');

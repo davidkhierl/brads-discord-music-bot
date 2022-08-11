@@ -269,7 +269,8 @@ export default class Music extends BotModule {
 				)
 			);
 			if (options.message) options.message.delete();
-			if (options.interaction) options.interaction.deleteReply();
+			if (options.interaction && !options.interaction?.ephemeral)
+				options.interaction.deleteReply();
 		}, 30000);
 	}
 }
