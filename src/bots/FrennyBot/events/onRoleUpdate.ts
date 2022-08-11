@@ -33,7 +33,7 @@ const onRoleUpdate: BotEventRoleUpdate<Role> = {
 			// ignore managed role
 			if (newRole.managed) {
 				transaction.setStatus('cancelled');
-				transaction.finish();
+				SentryHelper.finishTransaction(transaction);
 				return;
 			}
 			await updateGuildRole(newRole);
@@ -47,7 +47,7 @@ const onRoleUpdate: BotEventRoleUpdate<Role> = {
 			Sentry.captureException(error);
 		}
 
-		transaction.finish();
+		SentryHelper.finishTransaction(transaction);
 	},
 };
 
