@@ -158,7 +158,7 @@ export default class Music extends BotModule {
 				);
 			})
 			.on('queueDestroyed', async (queue) => {
-				queue.data?.interaction.reply({
+				queue.data?.interaction.channel?.send({
 					embeds: [
 						MessageEmbeds.Warning({
 							title: '🙌   Music stopped',
@@ -175,7 +175,6 @@ export default class Music extends BotModule {
 							},
 						}),
 					],
-					ephemeral: false,
 				});
 
 				await this._deletePlayerMessages(
