@@ -158,11 +158,11 @@ export default class Music extends BotModule {
 				);
 			})
 			.on('queueDestroyed', async (queue) => {
-				await queue.data?.interaction.followUp({
-					embeds: [
-						MessageEmbeds.Warning({ title: 'Stopping music' }),
-					],
-				});
+				// await queue.data?.interaction.channel?.send({
+				// 	embeds: [
+				// 		MessageEmbeds.Warning({ title: 'Stopping music' }),
+				// 	],
+				// });
 
 				const endReply = await queue.data?.interaction.channel?.send({
 					embeds: [
@@ -188,14 +188,23 @@ export default class Music extends BotModule {
 					{ message: endReply }
 				);
 			})
+			.on('channelEmpty', async (queue) => {
+				const endReply = await queue.data?.interaction.channel?.send({
+					embeds: [
+						MessageEmbeds.Warning({
+							title: '🥺   Everyone left the channel',
+						}),
+					],
+				});
+
+				setTimeout(() => {
+					endReply?.delete();
+				}, 30000);
+			})
 			.on('error', (error, queue) => {
 				console.log('Player Error: ', error);
 
 				if (queue) queue.stop();
-
-				// queue.data?.interaction.followUp({
-				// 	embeds: [MessageEmbeds.Error()],
-				// });
 			});
 	}
 

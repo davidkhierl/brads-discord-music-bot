@@ -1,5 +1,6 @@
 import Bot, { UserCommandError } from '../../../../core/bot/Bot.js';
 import BotCommandBuilder from '../../../../core/bot/BotCommandBuilder.js';
+import MessageEmbeds from '../../../../core/components/MessageEmbeds.js';
 import { isMusic } from '../../../../core/modules/Music.js';
 import { ChatInputCommandInteraction } from 'discord.js';
 
@@ -25,5 +26,9 @@ export default class stop extends BotCommandBuilder {
 			throw new UserCommandError('🙄   Yow! there are no songs playing');
 
 		queue.stop();
+
+		await queue.data?.interaction.followUp({
+			embeds: [MessageEmbeds.Warning({ title: 'Stopping music' })],
+		});
 	}
 }
