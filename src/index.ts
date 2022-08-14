@@ -1,6 +1,6 @@
 import FrennyBot, { getFrennyBotInstance } from './bots/FrennyBot/FrennyBot.js';
 import BotManager from './core/bot/BotManager.js';
-import Music from './core/modules/Music.js';
+import { Music } from './core/modules/Music/index.js';
 import prisma from './lib/prisma.js';
 import { __rootdir__ } from './root.js';
 import getSentryReleaseName from './utils/getSentryReleaseName.js';

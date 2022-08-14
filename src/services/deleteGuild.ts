@@ -1,14 +1,13 @@
 import prisma from '../lib/prisma.js';
-import { Guild } from 'discord.js';
 
 /**
  * Delete guild
- * @param guildId string
- * @return Guild
+ * @param {string} guildId
+ * @return {Guild} the deleted guild
  */
-async function deleteGuild(guild: string) {
+async function deleteGuild(guildId: string) {
 	return await prisma.guild.delete({
-		where: { id: guild },
+		where: { id: guildId },
 	});
 }
 

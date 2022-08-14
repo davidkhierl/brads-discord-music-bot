@@ -3,8 +3,7 @@ import { Role } from 'discord.js';
 
 /**
  * Add roles to guild
- * @param roles Discord Role
- * @param guildId string
+ * @param roles Discord Roles
  * @returns Role
  */
 async function saveGuildRoles(roles: Role[]) {

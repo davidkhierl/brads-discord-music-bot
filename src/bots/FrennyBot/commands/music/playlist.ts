@@ -1,7 +1,7 @@
 import Bot from '../../../../core/bot/Bot.js';
 import BotCommandBuilder from '../../../../core/bot/BotCommandBuilder.js';
 import MessageEmbeds from '../../../../core/components/MessageEmbeds.js';
-import { isMusic } from '../../../../core/modules/Music.js';
+import { isMusic } from '../../../../core/modules/Music/Music.js';
 import { ChatInputCommandInteraction } from 'discord.js';
 
 export default class playlist extends BotCommandBuilder {
@@ -38,7 +38,7 @@ export default class playlist extends BotCommandBuilder {
 
 		await join();
 
-		interaction.editReply({
+		await interaction.editReply({
 			embeds: [
 				MessageEmbeds.Info({
 					title: '',
