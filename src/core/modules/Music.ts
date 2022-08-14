@@ -158,12 +158,6 @@ export default class Music extends BotModule {
 				);
 			})
 			.on('queueDestroyed', async (queue) => {
-				// await queue.data?.interaction.channel?.send({
-				// 	embeds: [
-				// 		MessageEmbeds.Warning({ title: 'Stopping music' }),
-				// 	],
-				// });
-
 				const endReply = await queue.data?.interaction.channel?.send({
 					embeds: [
 						MessageEmbeds.Warning({
