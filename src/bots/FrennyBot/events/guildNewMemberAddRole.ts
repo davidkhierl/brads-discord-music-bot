@@ -1,4 +1,5 @@
-import { BotEvent, BotEventError } from '../../../core/bot/Bot.js';
+import { BotEvent } from '../../../core/bot/Bot.js';
+import { BotEventError } from '../../../core/bot/BotEventError.js';
 import getGuildDefaultRoleId from '../../../services/getGuildDefaultRoleId.js';
 import * as Sentry from '@sentry/node';
 import { GuildMember } from 'discord.js';
@@ -11,10 +12,10 @@ const guildNewMemberAddRole: BotEvent<GuildMember> = {
 	execute: async (guildMember) => {
 		// ? Still not sure if sentry transaction is necessary here.
 
-		try {
-			if (!guildMember.guild.available)
-				throw new BotEventError('Guild not available');
+		if (!guildMember.guild.available)
+			throw new BotEventError('Guild not available');
 
+		try {
 			if (guildMember.user.bot) return;
 
 			const newMembersRole = await getGuildDefaultRoleId(
@@ -32,4 +33,5 @@ const guildNewMemberAddRole: BotEvent<GuildMember> = {
 	},
 };
 
+// noinspection JSUnusedGlobalSymbols
 export default guildNewMemberAddRole;

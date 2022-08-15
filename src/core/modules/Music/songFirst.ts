@@ -2,7 +2,7 @@ import MessageEmbeds from '../../components/MessageEmbeds.js';
 import { MusicQueue } from './Music.js';
 import { Song } from 'discord-music-player';
 
-const songFirst = (queue: MusicQueue, song: Song) => {
+export const songFirst = (queue: MusicQueue, song: Song) => {
 	queue.data?.interaction.channel?.send({
 		embeds: [
 			MessageEmbeds.Info({
@@ -24,5 +24,3 @@ const songFirst = (queue: MusicQueue, song: Song) => {
 		content: '',
 	});
 };
-
-export default songFirst;

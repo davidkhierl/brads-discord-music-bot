@@ -1,4 +1,5 @@
-import { BotEvent, BotEventError } from '../../../core/bot/Bot.js';
+import { BotEvent } from '../../../core/bot/Bot.js';
+import { BotEventError } from '../../../core/bot/BotEventError.js';
 import SentryHelper from '../../../helpers/SentryHelper.js';
 import deleteGuildCommands from '../../../services/deleteGuildCommands.js';
 import deleteGuildRoles from '../../../services/deleteGuildRoles.js';
@@ -24,10 +25,9 @@ const guildCreate: BotEvent<Guild> = {
 			name: guild.name,
 		});
 
-		try {
-			if (!guild.available)
-				throw new BotEventError('Guild not available');
+		if (!guild.available) throw new BotEventError('Guild not available');
 
+		try {
 			await setGuildActiveState(guild.id, false);
 
 			await updateGuildDefaultRoleId(guild.id, null);
@@ -49,4 +49,5 @@ const guildCreate: BotEvent<Guild> = {
 	},
 };
 
+// noinspection JSUnusedGlobalSymbols
 export default guildCreate;

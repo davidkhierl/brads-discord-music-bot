@@ -15,4 +15,5 @@ const ready: BotEvent<Client<true>> = {
 	},
 };
 
+// noinspection JSUnusedGlobalSymbols
 export default ready;

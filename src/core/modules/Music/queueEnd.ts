@@ -1,8 +1,8 @@
 import MessageEmbeds from '../../components/MessageEmbeds.js';
 import { MusicQueue } from './Music.js';
-import clearPlayerMessages from './clearPlayerMessages.js';
+import { clearPlayerMessages } from './clearPlayerMessages.js';
 
-const queueEnd = async (queue: MusicQueue) => {
+export const queueEnd = async (queue: MusicQueue) => {
 	const endReply = await queue.data?.interaction.channel?.send({
 		embeds: [
 			MessageEmbeds.Success({
@@ -16,5 +16,3 @@ const queueEnd = async (queue: MusicQueue) => {
 		message: endReply,
 	});
 };
-
-export default queueEnd;

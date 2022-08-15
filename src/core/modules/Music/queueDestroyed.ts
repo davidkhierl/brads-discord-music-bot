@@ -2,7 +2,7 @@ import MessageEmbeds from '../../components/MessageEmbeds.js';
 import { MusicQueue } from './Music.js';
 import { clearPlayerMessages } from './index.js';
 
-const queueDestroyed = async (queue: MusicQueue) => {
+export const queueDestroyed = async (queue: MusicQueue) => {
 	const endReply = await queue.data?.interaction.channel?.send({
 		embeds: [
 			MessageEmbeds.Warning({
@@ -22,5 +22,3 @@ const queueDestroyed = async (queue: MusicQueue) => {
 		message: endReply,
 	});
 };
-
-export default queueDestroyed;

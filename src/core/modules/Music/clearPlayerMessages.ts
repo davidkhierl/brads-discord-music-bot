@@ -1,4 +1,4 @@
-import { MusicError } from './Music.js';
+import { MusicError } from './MusicError.js';
 import {
 	ChatInputCommandInteraction,
 	Message,
@@ -10,7 +10,7 @@ import {
  * @param channel Channel
  * @param options Interaction or Message
  */
-export default async function clearPlayerMessages(
+export async function clearPlayerMessages(
 	channel: TextBasedChannel | null | undefined,
 	options: {
 		message?: Message;

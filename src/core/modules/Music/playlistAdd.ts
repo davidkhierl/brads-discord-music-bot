@@ -2,7 +2,7 @@ import MessageEmbeds from '../../components/MessageEmbeds.js';
 import { MusicQueue } from './Music.js';
 import { Playlist } from 'discord-music-player';
 
-const playlistAdd = (_queue: MusicQueue, playlist: Playlist) => {
+export const playlistAdd = (_queue: MusicQueue, playlist: Playlist) => {
 	playlist.songs[0].data?.interaction.editReply({
 		embeds: [
 			MessageEmbeds.Info({
@@ -23,5 +23,3 @@ const playlistAdd = (_queue: MusicQueue, playlist: Playlist) => {
 		],
 	});
 };
-
-export default playlistAdd;

@@ -1,10 +1,10 @@
 import Bot from '../../../../core/bot/Bot.js';
 import BotCommandBuilder from '../../../../core/bot/BotCommandBuilder.js';
 import MessageEmbeds from '../../../../core/components/MessageEmbeds.js';
-import { isMusic } from '../../../../core/modules/Music/Music.js';
+import { isMusic } from '../../../../core/modules/Music/isMusic.js';
 import { ChatInputCommandInteraction } from 'discord.js';
 
-export default class play extends BotCommandBuilder {
+class play extends BotCommandBuilder {
 	constructor() {
 		super({ deferReply: true, ephemeral: true });
 		this.slash
@@ -61,3 +61,5 @@ export default class play extends BotCommandBuilder {
 			});
 	}
 }
+// noinspection JSUnusedGlobalSymbols
+export default play;

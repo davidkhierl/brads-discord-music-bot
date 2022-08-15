@@ -49,4 +49,5 @@ const onRoleCreate: BotEvent<Role> = {
 	},
 };
 
+// noinspection JSUnusedGlobalSymbols
 export default onRoleCreate;

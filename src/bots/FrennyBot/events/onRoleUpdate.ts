@@ -51,4 +51,5 @@ const onRoleUpdate: BotEventRoleUpdate<Role> = {
 	},
 };
 
+// noinspection JSUnusedGlobalSymbols
 export default onRoleUpdate;

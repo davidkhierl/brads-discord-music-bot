@@ -1,5 +1,6 @@
-import { UserCommandError } from '../../bot/Bot.js';
 import BotModule from '../../bot/BotModule.js';
+import UserCommandError from '../../bot/UserCommandError.js';
+import { MusicError } from './MusicError.js';
 import {
 	channelEmpty,
 	playerError,
@@ -41,7 +42,7 @@ export interface PlayerData {
 /**
  * Music functionality for the bot
  */
-export default class Music extends BotModule {
+export class Music extends BotModule {
 	/**
 	 * Player instance
 	 */
@@ -114,17 +115,3 @@ export default class Music extends BotModule {
 		await queue.join(member.voice.channel);
 	}
 }
-
-/**
- * Music type guard
- * @param module BotModule
- * @returns boolean
- */
-export function isMusic(module?: BotModule): module is Music {
-	return module instanceof Music;
-}
-
-/**
- * Music Error
- */
-export class MusicError extends Error {}

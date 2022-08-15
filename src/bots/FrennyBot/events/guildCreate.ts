@@ -1,4 +1,5 @@
-import { BotEvent, BotEventError } from '../../../core/bot/Bot.js';
+import { BotEvent } from '../../../core/bot/Bot.js';
+import { BotEventError } from '../../../core/bot/BotEventError.js';
 import SentryHelper from '../../../helpers/SentryHelper.js';
 import saveGuild from '../../../services/saveGuild.js';
 import saveGuildCommands from '../../../services/saveGuildCommands.js';
@@ -24,10 +25,9 @@ const guildCreate: BotEvent<Guild> = {
 			name: guild.name,
 		});
 
-		try {
-			if (!guild.available)
-				throw new BotEventError('Guild not available');
+		if (!guild.available) throw new BotEventError('Guild not available');
 
+		try {
 			await saveGuild({ id: guild.id, name: guild.name, isActive: true });
 
 			// filter only user created roles
@@ -83,4 +83,5 @@ const guildCreate: BotEvent<Guild> = {
 	},
 };
 
+// noinspection JSUnusedGlobalSymbols
 export default guildCreate;

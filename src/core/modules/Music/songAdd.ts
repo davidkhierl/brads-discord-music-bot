@@ -2,7 +2,7 @@ import MessageEmbeds from '../../components/MessageEmbeds.js';
 import { MusicQueue } from './Music.js';
 import { Song } from 'discord-music-player';
 
-const songAdd = (_queue: MusicQueue, song: Song) => {
+export const songAdd = (_queue: MusicQueue, song: Song) => {
 	if (song.isFirst) {
 		song.data?.interaction.editReply({
 			embeds: [
@@ -28,5 +28,3 @@ const songAdd = (_queue: MusicQueue, song: Song) => {
 		],
 	});
 };
-
-export default songAdd;

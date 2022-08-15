@@ -49,4 +49,5 @@ const onRoleDelete: BotEvent<Role> = {
 	},
 };
 
+// noinspection JSUnusedGlobalSymbols
 export default onRoleDelete;

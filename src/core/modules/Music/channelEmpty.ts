@@ -1,7 +1,7 @@
 import MessageEmbeds from '../../components/MessageEmbeds.js';
 import { MusicQueue } from './Music.js';
 
-const channelEmpty = async (queue: MusicQueue) => {
+export const channelEmpty = async (queue: MusicQueue) => {
 	const endReply = await queue.data?.interaction.channel?.send({
 		embeds: [
 			MessageEmbeds.Warning({
@@ -14,5 +14,3 @@ const channelEmpty = async (queue: MusicQueue) => {
 		endReply?.delete();
 	}, 30000);
 };
-
-export default channelEmpty;

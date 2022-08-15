@@ -1,5 +1,5 @@
-import { UserCommandError } from '../../../../core/bot/Bot.js';
 import BotCommandBuilder from '../../../../core/bot/BotCommandBuilder.js';
+import UserCommandError from '../../../../core/bot/UserCommandError.js';
 import MessageEmbeds from '../../../../core/components/MessageEmbeds.js';
 import prisma from '../../../../lib/prisma.js';
 import getGuildDefaultRoleId from '../../../../services/getGuildDefaultRoleId.js';
@@ -16,7 +16,7 @@ import {
 } from 'discord.js';
 import { concat } from 'lodash-es';
 
-export default class setNewMembersRole extends BotCommandBuilder {
+class setNewMembersRole extends BotCommandBuilder {
 	constructor() {
 		super({ deferReply: true, ephemeral: true });
 		try {
@@ -155,7 +155,7 @@ export default class setNewMembersRole extends BotCommandBuilder {
 					components: [],
 				});
 
-				console.log(error);
+				console.error(error);
 
 				selectMenuCollector.stop();
 			}
@@ -173,8 +173,7 @@ export default class setNewMembersRole extends BotCommandBuilder {
 					buttonInteraction.customId ===
 					'newMembersRoleApplyToExistingMembersAccept'
 				) {
-					if (!buttonInteraction.guildId)
-						throw new Error('guildId is null');
+					if (!buttonInteraction.guildId) return;
 
 					const roleId = await getGuildDefaultRoleId(
 						buttonInteraction.guildId
@@ -214,33 +213,34 @@ export default class setNewMembersRole extends BotCommandBuilder {
 					buttonCollector.stop();
 				}
 			} catch (error) {
+				buttonCollector.stop();
+
 				if (error instanceof DiscordAPIError && error.code === 50013) {
 					buttonInteraction.update({
 						embeds: [
 							MessageEmbeds.Error({
-								title: "I can't give one fo the role you selected",
-								description:
-									'Please fix it by putting my role **Frenny** above all the roles you selected',
+								title: "I can't give the role you selected",
+								description: `Please fix it by putting my role **${interaction.client.user?.username}** above all the role you selected`,
 							}),
 						],
 						content: '',
 						components: [],
 					});
 
-					console.log(error);
-
 					return;
 				}
-				console.log(error);
-
-				buttonCollector.stop();
 
 				buttonInteraction.update({
 					embeds: [MessageEmbeds.Error()],
 					content: '',
 					components: [],
 				});
+
+				console.error(error);
 			}
 		});
 	}
 }
+
+// noinspection JSUnusedGlobalSymbols
+export default setNewMembersRole;

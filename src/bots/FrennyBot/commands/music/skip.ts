@@ -1,10 +1,11 @@
-import Bot, { UserCommandError } from '../../../../core/bot/Bot.js';
+import Bot from '../../../../core/bot/Bot.js';
 import BotCommandBuilder from '../../../../core/bot/BotCommandBuilder.js';
+import UserCommandError from '../../../../core/bot/UserCommandError.js';
 import MessageEmbeds from '../../../../core/components/MessageEmbeds.js';
-import { isMusic } from '../../../../core/modules/Music/Music.js';
+import { isMusic } from '../../../../core/modules/Music/isMusic.js';
 import { ChatInputCommandInteraction } from 'discord.js';
 
-export default class skip extends BotCommandBuilder {
+class skip extends BotCommandBuilder {
 	constructor() {
 		super({ deferReply: true, ephemeral: true });
 		this.slash
@@ -78,3 +79,6 @@ export default class skip extends BotCommandBuilder {
 		});
 	}
 }
+
+// noinspection JSUnusedGlobalSymbols
+export default skip;

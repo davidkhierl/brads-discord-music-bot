@@ -4,7 +4,9 @@ import MessageEmbeds, {
 	MESSAGE_EMBED_COLORS,
 } from '../components/MessageEmbeds.js';
 import BotCommandBuilder from './BotCommandBuilder.js';
+import { BotError } from './BotError.js';
 import BotModule from './BotModule.js';
+import UserCommandError from './UserCommandError.js';
 import { REST } from '@discordjs/rest';
 import * as Sentry from '@sentry/node';
 import {
@@ -384,6 +386,7 @@ export default class Bot {
 		});
 	}
 
+	// noinspection JSUnusedGlobalSymbols
 	/**
 	 * Delete guild command
 	 * @param guildId Guild ID
@@ -409,30 +412,3 @@ export default class Bot {
 		});
 	}
 }
-/**
- * Bot error
- */
-export class BotError extends Error {}
-
-export interface UserCommandErrorOptions {
-	description?: string;
-	color?: number;
-}
-
-/**
- * Error caused by user initiating commands
- */
-export class UserCommandError extends Error {
-	public description?: string;
-	public color?: number;
-	constructor(message?: string, options?: UserCommandErrorOptions) {
-		super(message);
-		this.description = options?.description;
-		this.color = options?.color;
-	}
-}
-
-/**
- * Error related to a bot event
- */
-export class BotEventError extends Error {}
