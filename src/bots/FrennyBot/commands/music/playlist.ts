@@ -64,8 +64,6 @@ class playlist extends BotCommandBuilder {
 				if (!guildQueue) queue.stop();
 
 				console.log(error);
-
-				throw new Error(error);
 			});
 	}
 }
