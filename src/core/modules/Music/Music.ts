@@ -37,6 +37,7 @@ export interface MusicInit {
 
 export interface PlayerData {
 	interaction: ChatInputCommandInteraction;
+	playlistUrl?: string;
 }
 
 /**
