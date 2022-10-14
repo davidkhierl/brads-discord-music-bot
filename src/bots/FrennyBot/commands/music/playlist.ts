@@ -62,7 +62,13 @@ class playlist extends BotCommandBuilder {
 			})
 			.catch((error) => {
 				if (!guildQueue) queue.stop();
-
+				interaction.followUp({
+					embeds: [
+						MessageEmbeds.Error({
+							title: '😵 Something went wrong. Stopping Music',
+						}),
+					],
+				});
 				console.log(error);
 			});
 	}

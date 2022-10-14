@@ -32,7 +32,9 @@ class skip extends BotCommandBuilder {
 		const queueCount = guildQueue?.songs.length;
 
 		if (!queue.isPlaying || !queueCount)
-			throw new UserCommandError('🙄   Yow! there are no songs playing');
+			throw new UserCommandError(
+				'🙄   Yow! there are no songs being played'
+			);
 
 		const currentTrack = guildQueue?.songs[0];
 		const optionIndex = interaction.options.getInteger('index');

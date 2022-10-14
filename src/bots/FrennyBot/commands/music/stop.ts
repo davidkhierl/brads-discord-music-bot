@@ -24,7 +24,9 @@ class stop extends BotCommandBuilder {
 		queue.setData({ interaction });
 
 		if (!queue.isPlaying)
-			throw new UserCommandError('🙄   Yow! there are no songs playing');
+			throw new UserCommandError(
+				'🙄   Yow! there are no songs being played'
+			);
 
 		queue.stop();
 
