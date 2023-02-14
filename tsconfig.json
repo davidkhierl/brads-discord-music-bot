@@ -1,36 +1,26 @@
 {
-	"compilerOptions": {
-		"target": "ESNext",
-		"module": "NodeNext",
-		"lib": ["ESNext"],
-		"outDir": "build",
-		"allowJs": true,
-		"removeComments": true,
-		"isolatedModules": false,
-		"strict": true,
-		"noImplicitAny": true,
-		"strictNullChecks": true,
-		"strictFunctionTypes": true,
-		"noImplicitThis": true,
-		"noUnusedLocals": false,
-		"noUnusedParameters": false,
-		"noImplicitReturns": true,
-		"noFallthroughCasesInSwitch": true,
-		"moduleResolution": "nodenext",
-		"allowSyntheticDefaultImports": true,
-		"esModuleInterop": true,
-		"resolveJsonModule": true,
-		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true,
-		"forceConsistentCasingInFileNames": true,
-		"useUnknownInCatchVariables": false,
-		"noEmitHelpers": true,
-		"importHelpers": true
-	},
-	"ts-node": {
-		"files": true,
-		"esm": true
-	},
-	"exclude": ["node_modules", "build"],
-	"include": ["src/**/*"]
+  "compilerOptions": {
+    "module": "commonjs",
+    "declaration": true,
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "es2017",
+    "sourceMap": true,
+    "outDir": "./dist",
+    "incremental": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }
