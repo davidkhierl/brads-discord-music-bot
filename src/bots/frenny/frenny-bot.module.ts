@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { IntentsBitField } from 'discord.js';
 
+import { FrennyBotPingCommand } from '@/bots/frenny/frenny-bot-ping.command';
 import FrennyBotService from '@/bots/frenny/frenny-bot.service';
 import { FrennyBotENVConfig } from '@/bots/frenny/frenny-bot.type';
 import { BotModule } from '@/core/bot/bot.module';
@@ -25,7 +26,7 @@ import { BotModule } from '@/core/bot/bot.module';
       }),
     }),
   ],
-  providers: [FrennyBotService],
+  providers: [FrennyBotService, FrennyBotPingCommand],
   exports: [FrennyBotService],
 })
 export class FrennyBotModule {}
